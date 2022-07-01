@@ -14,6 +14,7 @@ const App = () => {
   const loggedIn = user !== null;
   return (
     <div>
+      {user && <p>You are now logged in {user.name}</p>}
       <BrowserRouter>
         <Suspense fallback={"Loading"}>
           {loggedIn ? (

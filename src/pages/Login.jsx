@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+import { useAuthContext } from "../contexts/authContext";
 function Copyright(props) {
   return (
     <Typography
@@ -35,8 +36,11 @@ const theme = createTheme();
 
 const Login = () => {
   const [error, setError] = useState("");
+  const { user, setNewUser, updateTokens } = useAuthContext();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // get form values
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
@@ -44,6 +48,7 @@ const Login = () => {
 
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
+    // list of rules for form validation
     const LOGIN_RULES = [
       {
         condition: email !== "" && password !== "",
@@ -60,6 +65,7 @@ const Login = () => {
     ];
 
     let ruleBroken = false;
+    // check whether rule conditions are passed
     LOGIN_RULES.forEach((rule) => {
       if (ruleBroken === true) return;
       if (rule.condition === false) {
@@ -67,17 +73,27 @@ const Login = () => {
         ruleBroken = true;
       }
     });
+    // return if all rules not passed
     if (ruleBroken) return;
 
+    // post to server
     try {
       const result = await axios.post("/auth/login", {
         email,
         password,
       });
       const resData = result.data;
+      // show error if custom error field found
       if (resData.error) {
         setError(resData.error);
       }
+      // update context with user data
+      const { userId, userName, accessToken, refreshToken } = resData;
+      setNewUser({
+        id: userId,
+        name: userName,
+      });
+      updateTokens(accessToken, refreshToken);
     } catch (err) {
       console.log(err.message);
       setError(err.message);
