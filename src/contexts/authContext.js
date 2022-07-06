@@ -2,45 +2,42 @@ import { createContext, useState, useContext } from "react";
 
 const AuthContext = createContext();
 const authUser = JSON.parse(localStorage.getItem(`mern-chat-user`));
+const access = JSON.parse(localStorage.getItem("mern-chat-access"));
 
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(authUser);
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem("mern-chat-access")
-  );
-  const [refreshToken, setRefreshToken] = useState(
-    localStorage.getItem("mern-chat-refresh")
-  );
+  const [accessToken, setAccessToken] = useState(access);
 
+  // set user in context and local storage
   const setNewUser = (user) => {
     setUser(user);
     localStorage.setItem("mern-chat-user", JSON.stringify(user));
   };
 
+  // remove user from context and local storage
   const removeUser = () => {
     setUser(null);
     localStorage.removeItem("mern-chat-user");
   };
 
-  const updateTokens = (access, refresh) => {
+  // update access token in context and local storage
+  const updateTokens = (access) => {
     setAccessToken(access);
-    setRefreshToken(refresh);
-    localStorage.setItem("mern-chat-access", access);
-    localStorage.setItem("mern-chat-refresh", refresh);
+    localStorage.setItem("mern-chat-access", JSON.stringify(access));
   };
-  const removeTokens = () => {
-    updateTokens(null, null);
+  // remove token from local storage
+  const removeToken = () => {
+    localStorage.removeItem("mern-chat-access");
   };
   return (
     <AuthContext.Provider
       value={{
         user,
         accessToken,
-        refreshToken,
         setNewUser,
         removeUser,
         updateTokens,
-        removeTokens,
+        removeToken,
       }}
     >
       {children}

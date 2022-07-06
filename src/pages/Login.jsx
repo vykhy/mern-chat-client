@@ -88,12 +88,12 @@ const Login = () => {
         setError(resData.error);
       }
       // update context with user data
-      const { userId, userName, accessToken, refreshToken } = resData;
+      const { userId, userName, accessToken } = resData;
       setNewUser({
         id: userId,
         name: userName,
       });
-      updateTokens(accessToken, refreshToken);
+      updateTokens(accessToken);
     } catch (err) {
       console.log(err.message);
       setError(err.message);
