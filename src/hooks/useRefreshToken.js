@@ -2,15 +2,20 @@ import axios from "../api/axios";
 import { useAuthContext } from "../contexts/authContext";
 
 const useRefreshToken = () => {
-  const { updateTokens } = useAuthContext();
+  const { updateTokens, removeToken, removeUser } = useAuthContext();
 
   const refresh = async () => {
-    const response = await axios.get("/auth/refresh", {
-      withCredentials: true,
-    });
-    console.log(response.data);
-    updateTokens(response.data.accessToken);
-    return response.data.accessToken;
+    try {
+      const response = await axios.get("/auth/refresh", {
+        withCredentials: true,
+      });
+      updateTokens(response.data.accessToken);
+      return response.data.accessToken;
+    } catch (err) {
+      // console.log(err);
+      removeToken();
+      removeUser();
+    }
   };
 
   return refresh;
