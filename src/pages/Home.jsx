@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
 
 function Home() {
   const axiosPrivate = useAxiosPrivate();
@@ -29,6 +31,24 @@ function Home() {
       <button onClick={() => setNewUser("Marco o7")}>Log in</button>
       <button onClick={() => handleLogout()}>Log out</button>
       <button onClick={() => test()}>Test</button>
+      <br />
+      <button
+        onClick={() => {
+          axiosPrivate
+            .get("/users/all")
+            .then((data) => null)
+            .catch((e) => null);
+        }}
+      >
+        See users
+      </button>
+      <Grid container>
+        <Grid item padding={"10px"}>
+          <Link href="/contacts/add" variant="body2">
+            {"Add New Contact"}
+          </Link>
+        </Grid>
+      </Grid>
     </div>
   );
 }

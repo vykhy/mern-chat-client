@@ -8,6 +8,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
+const AddContact = lazy(() => import("./pages/AddContact"));
 
 const App = () => {
   const { user } = useAuthContext();
@@ -21,6 +22,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/contacts" element={<Contacts />} />
+              <Route path="/contacts/add" element={<AddContact />} />
               <Route path="*" element={<Home />} />
             </Routes>
           ) : (
