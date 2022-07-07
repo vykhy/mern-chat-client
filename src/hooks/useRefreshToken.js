@@ -4,11 +4,17 @@ import { useAuthContext } from "../contexts/authContext";
 const useRefreshToken = () => {
   const { updateTokens, removeToken, removeUser } = useAuthContext();
 
+  /**
+   * refresh the access token using refresh token
+   * if refresh token is also expired, user is logged out and forced to log in again
+   * @returns
+   */
   const refresh = async () => {
     try {
       const response = await axios.get("/auth/refresh", {
         withCredentials: true,
       });
+      // update access token in context and local storage
       updateTokens(response.data.accessToken);
       return response.data.accessToken;
     } catch (err) {

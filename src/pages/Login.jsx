@@ -86,6 +86,7 @@ const Login = () => {
       // show error if custom error field found
       if (resData.error) {
         setError(resData.error);
+        return;
       }
       // update context with user data
       const { userId, userName, accessToken } = resData;

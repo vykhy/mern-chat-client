@@ -5,18 +5,19 @@ import { useAuthContext } from "../contexts/authContext";
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
-  const {
-    accessToken,
-    user: { id },
-  } = useAuthContext();
+  const { accessToken } = useAuthContext();
 
+  /**
+   * set interceptors for the axiosPrivate instance
+   * automatically sets access token in header
+   * and user id in header so that we can access it easily to perfom DB queries
+   */
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       // we can write a callback that changes the value before returning it to update the state
       (config) => {
         if (!config.headers["Authorization"]) {
           config.headers["Authorization"] = `Bearer ${accessToken}`;
-          config.headers["currentuser"] = id;
         }
         return config;
       },
@@ -29,7 +30,7 @@ const useAxiosPrivate = () => {
       async (error) => {
         const prevRequest = error?.config;
         // if there is error and the error code is 403
-        // it is because of expires token, thus we refresh the token
+        // it is because of expired token, thus we refresh the token
         if (error?.response?.status === 403 && !prevRequest?.sent) {
           prevRequest.sent = true;
           const newAccessToken = await refresh();

@@ -4,7 +4,6 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
-import FolderIcon from "@mui/icons-material/Folder";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import { Divider } from "@mui/material";
