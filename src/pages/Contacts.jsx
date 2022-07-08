@@ -13,12 +13,13 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
-  const secondary = false;
+  const secondary = true;
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const fetchContacts = async () => {
       const response = await axiosPrivate.get("/contacts");
+      console.log(response.data.contacts);
       setContacts(response.data.contacts);
     };
     fetchContacts();
@@ -27,19 +28,21 @@ const Contacts = () => {
     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
       <Grid container spacing={2}>
         <MenuList>
-          {contacts?.map((contact, idx) => (
-            <MenuItem key={idx}>
-              <ListItemAvatar>
-                <Avatar src={contact.img || "/images/default-user.png"} />
-              </ListItemAvatar>
-              <ListItemText
-                cursor={"pointer"}
-                primary={contact.name}
-                secondary={secondary ? contact.email : null}
-              />
-              <Divider />
-            </MenuItem>
-          ))}
+          {contacts
+            ?.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
+            .map((contact, idx) => (
+              <MenuItem key={idx}>
+                <ListItemAvatar>
+                  <Avatar src={contact.img || "/images/default-user.png"} />
+                </ListItemAvatar>
+                <ListItemText
+                  cursor={"pointer"}
+                  primary={contact.name}
+                  secondary={secondary ? contact.contactId.email : null}
+                />
+                <Divider />
+              </MenuItem>
+            ))}
         </MenuList>
       </Grid>
     </Box>

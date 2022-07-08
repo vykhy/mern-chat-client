@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import SocketContextProvider from "./contexts/socketContext";
 import "./App.css";
 import { useAuthContext } from "./contexts/authContext";
 
@@ -13,18 +13,21 @@ const AddContact = lazy(() => import("./pages/AddContact"));
 const App = () => {
   const { user } = useAuthContext();
   const loggedIn = user !== null;
+
   return (
     <div>
       {user && <p>You are now logged in {user.name}</p>}
       <BrowserRouter>
         <Suspense fallback={"Loading"}>
           {loggedIn ? (
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/contacts" element={<Contacts />} />
-              <Route path="/contacts/add" element={<AddContact />} />
-              <Route path="*" element={<Home />} />
-            </Routes>
+            <SocketContextProvider id={user.id}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/contacts" element={<Contacts />} />
+                <Route path="/contacts/add" element={<AddContact />} />
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </SocketContextProvider>
           ) : (
             <Routes>
               <Route path="/login" element={<Login />} />

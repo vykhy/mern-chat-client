@@ -139,6 +139,7 @@ const AddContact = () => {
               label="Name"
               type="text"
               id="name"
+              autoFocus
             />
             <TextField
               margin="normal"
@@ -148,7 +149,6 @@ const AddContact = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
             />
             <Button
               type="submit"
