@@ -11,7 +11,7 @@ function SocketContextProvider({ id, children }) {
     setSocket(newSocket);
 
     return () => {
-      newSocket.disconnect();
+      socket.disconnect();
     };
   }, [id]);
   return (

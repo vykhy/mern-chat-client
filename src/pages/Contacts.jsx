@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
@@ -32,14 +33,17 @@ const Contacts = () => {
             ?.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map((contact, idx) => (
               <MenuItem key={idx}>
-                <ListItemAvatar>
-                  <Avatar src={contact.img || "/images/default-user.png"} />
-                </ListItemAvatar>
-                <ListItemText
-                  cursor={"pointer"}
-                  primary={contact.name}
-                  secondary={secondary ? contact.contactId.email : null}
-                />
+                <Link to={`/chats/${contact._id}`}>
+                  <ListItemAvatar>
+                    <Avatar src={contact.img || "/images/default-user.png"} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    cursor={"pointer"}
+                    primary={contact.name}
+                    secondary={secondary ? contact.contactId.email : null}
+                  />
+                </Link>
+
                 <Divider />
               </MenuItem>
             ))}

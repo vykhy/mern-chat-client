@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useSocket } from "../contexts/socketContext";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
+import Chats from "../components/Chats";
 
-const Home = () => {
-  const axiosPrivate = useAxiosPrivate();
+const Home = ({ chats }) => {
   const { socket } = useSocket();
   const { user, setNewUser, removeUser, removeToken } = useAuthContext();
   const [text, setText] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.innerWidth > 768) {
+      navigate(`/chats/${chats[0].id}`);
+    }
+  }, []);
 
   const testSocket = () => {
     socket.emit("yes");
@@ -25,11 +32,6 @@ const Home = () => {
     removeToken();
   };
 
-  const test = async () => {
-    setText("Testing...");
-    const response = await axiosPrivate.get("/test");
-    setText(response.data.text);
-  };
   return (
     <div>
       <h1>Home</h1>
@@ -41,29 +43,6 @@ const Home = () => {
       {text && <p>{text}</p>}
       <button onClick={() => setNewUser("Marco o7")}>Log in</button>
       <button onClick={() => handleLogout()}>Log out</button>
-      <button onClick={() => test()}>Test</button>
-      <br />
-      <button
-        onClick={() => {
-          axiosPrivate
-            .get("/users/all")
-            .then((data) => null)
-            .catch((e) => null);
-        }}
-      >
-        See users
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          axiosPrivate
-            .get("/deletecontacts")
-            .then((data) => null)
-            .catch((e) => null);
-        }}
-      >
-        Delete contacts
-      </button>
       <br />
       <button onClick={() => testSocket()}>test socket</button>
       <Grid container>
@@ -71,6 +50,9 @@ const Home = () => {
           <Link href="/contacts/add" variant="body2">
             {"Add New Contact"}
           </Link>
+        </Grid>
+        <Grid item padding={"10px"}>
+          <Chats chats={chats}></Chats>
         </Grid>
       </Grid>
     </div>
