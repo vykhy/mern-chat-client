@@ -22,7 +22,6 @@ function ChatRoom({ id, chat }) {
 
     // emit socket and send message with user's id
     socket?.emit("send-message", { id, message });
-    socket?.on("server-received-message", (data) => console.log(data));
     // if responds with new chat id, add chat id to chats in memory
 
     // push message to local chats
