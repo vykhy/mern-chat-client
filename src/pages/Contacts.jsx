@@ -20,7 +20,6 @@ const Contacts = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       const response = await axiosPrivate.get("/contacts");
-      console.log(response.data.contacts);
       setContacts(response.data.contacts);
     };
     fetchContacts();
@@ -33,7 +32,7 @@ const Contacts = () => {
             ?.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map((contact, idx) => (
               <MenuItem key={idx}>
-                <Link to={`/chats/${contact._id}`}>
+                <Link to={`/chats/${contact.contactId._id}`}>
                   <ListItemAvatar>
                     <Avatar src={contact.img || "/images/default-user.png"} />
                   </ListItemAvatar>

@@ -17,8 +17,12 @@ const App = () => {
   const axiosPrivate = useAxiosPrivate();
   const loggedIn = user !== null;
 
-  const fakeChats = [{ id: "lmao" }, { id: "cow" }];
+  const fakeChats = [
+    { id: "lmao", messages: [] },
+    { id: "cow", messages: [] },
+  ];
   const [chats, setChats] = useState(fakeChats);
+  const [random, setRandom] = useState(true);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -44,12 +48,35 @@ const App = () => {
     const fetchAndSetChats = async () => {
       console.log("chats fetched...");
       // fetch chats
+      const response = await axiosPrivate.get("/chats");
+      const data = response.data;
+      setChats(data.chats);
+      console.log(chats);
       // fetch contacts
       // map chat to contacts
     };
     fetchAndSetChats();
   }, []);
 
+  const triggerRerender = () => {
+    setRandom((prevState) => !prevState);
+  };
+  const addNewChat = (data) => {
+    let chat = {
+      _id: data.chat._id,
+      messages: [data.message],
+    };
+    chats.push(chat);
+  };
+
+  const addMessage = (data) => {
+    setChats((chats) =>
+      chats
+        .find((chat) => chat._id === data.message.chatId)
+        .messages.push(data.message)
+    );
+    console.log(chats);
+  };
   return (
     <div>
       {user && <p>You are now logged in {user.name}</p>}
@@ -61,7 +88,14 @@ const App = () => {
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route
                   path="/chats/:id"
-                  element={<ChatsContainer chats={chats} />}
+                  element={
+                    <ChatsContainer
+                      chats={chats}
+                      addNewChat={addNewChat}
+                      addMessage={addMessage}
+                      triggerRerender={triggerRerender}
+                    />
+                  }
                 />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/contacts/add" element={<AddContact />} />

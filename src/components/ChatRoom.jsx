@@ -1,19 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
+import { useAuthContext } from "../contexts/authContext";
 
-function ChatRoom({ id, chat }) {
+function ChatRoom({ id, chats }) {
   const [message, setMessage] = useState("");
+  const { user } = useAuthContext();
+  const [chat, setChat] = useState(
+    chats.find((chat) => chat._id === id) || null
+  );
+  useEffect(() => {
+    setChat(chats.find((chat) => chat._id === id) || null);
+  }, [id, chats]);
+  console.log("chatroom rerendered");
+  // id of current user
+  const currentUserId = user.id;
+  // get the id of recipient by filtering users from chat whose id does not match
+  // current user Id
+  // this list has only two users => [currentUser, recipient]
+  // if chat is new, chat will be null and the id prop will be a userId
+  // which will be the recipient id and a new chat will be created
+  const recipientId = chat?.users.find((user) => user !== currentUserId) || id;
 
   const { socket } = useSocket();
+  console.log(chat);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message === "") return;
-    // get message value
+    // get the chat id from chat prop
+    // if it is a new chat, chat value will be null
+    // and server will create a new chat automatically
+    let chatId = chat._id || null;
     console.log("sending...");
     // send to chat id
     // if it is a new chat, we will send the userId of the recipient
@@ -21,18 +42,12 @@ function ChatRoom({ id, chat }) {
     // with the current user and recipient and return the chat id
 
     // emit socket and send message with user's id
-    socket?.emit("send-message", { id, message });
-    // if responds with new chat id, add chat id to chats in memory
-
-    // push message to local chats
-
-    // clear message
+    socket?.emit("send-message", { chatId, recipientId, message });
     setMessage("");
   };
   return (
     <div>
       <Box fullHeight sx={{ height: "100vh", position: "relative" }}>
-        {JSON.stringify(chat)}
         {message}
         <Box
           sx={{
@@ -42,6 +57,15 @@ function ChatRoom({ id, chat }) {
             transform: "translateY(-100%)",
           }}
         >
+          {chat?.messages?.map((message, idx) => (
+            <Box key={idx}>
+              <Box>
+                <b>{message.userId}</b>
+                <br />
+                {message.message}
+              </Box>
+            </Box>
+          ))}
           <form
             style={{
               display: "flex",

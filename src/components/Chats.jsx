@@ -6,7 +6,7 @@ function Chats({ chats }) {
   return (
     <>
       {chats?.map((chat, idx) => (
-        <Link to={`/chats/${chat.id}`} key={idx}>
+        <Link to={`/chats/${chat._id}`} key={idx}>
           <Chat chat={chat} />
         </Link>
       ))}

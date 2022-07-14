@@ -14,7 +14,7 @@ const Home = ({ chats }) => {
 
   useEffect(() => {
     if (window.innerWidth > 768) {
-      navigate(`/chats/${chats[0].id}`);
+      navigate(`/chats/${chats[0]._id}`);
     }
   }, []);
 

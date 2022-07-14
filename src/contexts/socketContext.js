@@ -9,7 +9,7 @@ function SocketContextProvider({ id, children }) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    //if(user===null) return
+    if (user === null) return;
     const newSocket = socketio.connect(process.env.SOCKET_URL, {
       query: {
         userId: user.id,
@@ -20,7 +20,7 @@ function SocketContextProvider({ id, children }) {
     return () => {
       newSocket.disconnect();
     };
-  }, [id]);
+  }, [id, user]);
   return (
     <SocketContext.Provider value={{ socket }}>
       {children}
