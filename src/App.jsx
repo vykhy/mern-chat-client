@@ -42,14 +42,29 @@ const App = () => {
   }, [user, accessToken]);
 
   useEffect(() => {
+    if (!loggedIn) return;
     const fetchAndSetChats = async () => {
       // fetch chats
       const response = await axiosPrivate.get("/chats");
-      const data = response.data;
-      dispatch({ type: "loaded-messages", payload: data.chats });
-      // setChats(data.chats);
+      const chats = response.data.chats;
       // fetch contacts
+      const contactResponse = await axiosPrivate.get("/contacts");
+      const contacts = contactResponse.data.contacts;
       // map chat to contacts
+      chats.forEach((chat) => {
+        chat.contact =
+          contacts.find((contact) =>
+            // find chat where user id of contact and chat match
+            // filter chat users array because the current user is in all the chats
+            // and it caused the name of current user to be rendered on every chat
+            chat.users
+              .filter((id) => user.id != id)
+              .includes(contact.contactId._id)
+          ) || null;
+      });
+      // console.log(contacts);
+      // console.log(chats);
+      dispatch({ type: "loaded-messages", payload: chats });
     };
     fetchAndSetChats();
   }, []);
@@ -71,6 +86,16 @@ const App = () => {
               <Header />
               <Routes>
                 <Route path="/" element={<Home chats={chats} />} />
+                <Route
+                  path="/chats"
+                  element={
+                    <ChatsContainer
+                      chats={chats}
+                      addNewChat={addNewChat}
+                      addMessage={addMessage}
+                    />
+                  }
+                />
                 <Route
                   path="/chats/:id"
                   element={

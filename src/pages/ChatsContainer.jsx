@@ -7,7 +7,8 @@ import { Grid, textFieldClasses } from "@mui/material";
 
 function ChatsContainer({ chats, addMessage, addNewChat }) {
   const { socket } = useSocket();
-  const { id } = useParams();
+  let { id } = useParams();
+  if (!id) id = chats[0]?._id;
 
   useEffect(() => {
     socket?.on("new-message", (data) => handleNewMessage(data));

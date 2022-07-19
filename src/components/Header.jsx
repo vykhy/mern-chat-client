@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 function Header() {
   return (
     <>
-      <Grid container>
+      <Grid container marginBottom={"20px"}>
         <Grid item xs={4}>
-          <Link to="/">Chats</Link>
+          <Link to="/chats">Chats</Link>
         </Grid>
         <Grid item xs={4}>
           <Link to="/contacts">Contacts</Link>

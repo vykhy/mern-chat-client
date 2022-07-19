@@ -25,7 +25,13 @@ function Contact({ contact, chats, dispatch }) {
       userId1: contact.contactId._id,
       userId2: id,
     });
+    const contactResponse = await axiosPrivate.get(
+      `/contacts/${contact.contactId._id}`
+    );
+    const chatContact = contactResponse.data;
     let newChat = response.data;
+    console.log(chatContact);
+    newChat.contact = chatContact;
     newChat.messages = [];
     dispatch({ type: "new-chat", payload: newChat });
     console.log(newChat);
