@@ -1,7 +1,6 @@
 const chatReducer = (state, action) => {
   switch (action.type) {
     case "loaded-messages": {
-      console.log(action.payload);
       return action.payload;
     }
     case "new-message": {
@@ -18,6 +17,7 @@ const chatReducer = (state, action) => {
       return [chat, ...state];
     }
     case "new-chat": {
+      console.log(state, action.payload);
       return [action.payload, ...state];
     }
     default:

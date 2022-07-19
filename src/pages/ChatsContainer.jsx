@@ -4,33 +4,49 @@ import ChatRoom from "../components/ChatRoom";
 import { useSocket } from "../contexts/socketContext";
 import { useParams } from "react-router-dom";
 import { Grid, textFieldClasses } from "@mui/material";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function ChatsContainer({ chats, addMessage, addNewChat }) {
   const { socket } = useSocket();
+  const axiosPrivate = useAxiosPrivate();
   let { id } = useParams();
   if (!id) id = chats[0]?._id;
 
   useEffect(() => {
     socket?.on("new-message", (data) => handleNewMessage(data));
     socket?.on("message-sent", (data) => handleMessageSent(data));
+    socket?.on("new-chat-message", (data) => handleNewChat(data));
 
     return () => {
       socket?.off("new-message");
       socket?.off("message-sent");
+      socket?.off("new-chat-message");
     };
   }, [socket]);
 
-  const handleNewMessage = (data) => {
-    console.log(data);
-    if (data.chat) {
-      addNewChat(data);
+  console.log(chats);
+  const handleNewChat = async (data) => {
+    const chat = data.chat;
+    const message = data.message;
+    if (chats.find((chat) => chat._id === data.chat._id)) {
+      addMessage(message);
+      return;
     } else {
-      addMessage(data);
+      console.log("run here");
+      const contact = await axiosPrivate.get(`/contacts/${message.authorId}`);
+      console.log(contact);
+      chat.contact = contact.data;
+      chat.messages = [message];
+      addNewChat(chat);
     }
+
+    // addNewMessage(message)
+  };
+  const handleNewMessage = (data) => {
+    addMessage(data);
   };
   const handleMessageSent = (data) => {
-    if (data.chat) addNewChat(data);
-    else addMessage(data);
+    addMessage(data);
   };
   return (
     <>

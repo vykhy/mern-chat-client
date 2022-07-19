@@ -18,6 +18,7 @@ function ChatRoom({ chatId, chats }) {
     if (!chats) return;
     setChat(chats.find((chat) => chat._id === id) || null);
   }, [id, chats]);
+  let newChat;
   // id of current user
   const currentUserId = user.id;
   // get the id of recipient by filtering users from chat whose id does not match
@@ -34,6 +35,7 @@ function ChatRoom({ chatId, chats }) {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message === "") return;
+    newChat = chat.messages.length === 0;
     // get the chat id from chat prop
     // if it is a new chat, chat value will be null
     // and server will create a new chat automatically
@@ -44,7 +46,7 @@ function ChatRoom({ chatId, chats }) {
     // with the current user and recipient and return the chat id
 
     // emit socket and send message with user's id
-    socket?.emit("send-message", { chatId, recipientId, message });
+    socket?.emit("send-message", { chatId, recipientId, message, newChat });
     setMessage("");
   };
   return (
