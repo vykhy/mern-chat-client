@@ -24,7 +24,6 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
     };
   }, [socket]);
 
-  console.log(chats);
   const handleNewChat = async (data) => {
     const chat = data.chat;
     const message = data.message;
@@ -32,7 +31,6 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
       addMessage(message);
       return;
     } else {
-      console.log("run here");
       const contact = await axiosPrivate.get(`/contacts/${message.authorId}`);
       console.log(contact);
       chat.contact = contact.data;

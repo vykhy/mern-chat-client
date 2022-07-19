@@ -37,16 +37,19 @@ function ChatRoom({ chatId, chats }) {
     if (message === "") return;
     newChat = chat.messages.length === 0;
     // get the chat id from chat prop
-    // if it is a new chat, chat value will be null
-    // and server will create a new chat automatically
     let chatId = chat?._id || null;
     // send to chat id
-    // if it is a new chat, we will send the userId of the recipient
-    // when the server doesnt find the chat id, it will create a new chat
-    // with the current user and recipient and return the chat id
+    // if it is a new chat, we will send new chat property as true
+    // thus the server will send the chat details along with message to the recipient
 
     // emit socket and send message with user's id
-    socket?.emit("send-message", { chatId, recipientId, message, newChat });
+    socket?.emit("send-message", {
+      chatId,
+      recipientId,
+      authorId: currentUserId,
+      message,
+      newChat,
+    });
     setMessage("");
   };
   return (
