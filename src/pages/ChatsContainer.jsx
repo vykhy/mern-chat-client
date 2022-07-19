@@ -3,9 +3,9 @@ import Chats from "../components/Chats";
 import ChatRoom from "../components/ChatRoom";
 import { useSocket } from "../contexts/socketContext";
 import { useParams } from "react-router-dom";
-import { Grid } from "@mui/material";
+import { Grid, textFieldClasses } from "@mui/material";
 
-function ChatsContainer({ chats, addMessage, addNewChat, triggerRerender }) {
+function ChatsContainer({ chats, addMessage, addNewChat }) {
   const { socket } = useSocket();
   const { id } = useParams();
 
@@ -26,13 +26,10 @@ function ChatsContainer({ chats, addMessage, addNewChat, triggerRerender }) {
     } else {
       addMessage(data);
     }
-    triggerRerender();
   };
   const handleMessageSent = (data) => {
-    console.log(data);
     if (data.chat) addNewChat(data);
     else addMessage(data);
-    triggerRerender();
   };
   return (
     <>
@@ -41,8 +38,9 @@ function ChatsContainer({ chats, addMessage, addNewChat, triggerRerender }) {
           <Chats chats={chats}></Chats>
         </Grid>
         <Grid item xs={12} sm={9}>
-          <ChatRoom id={id} chats={chats} triggerRerender={triggerRerender} />
+          <ChatRoom chatId={id} chats={chats} />
         </Grid>
+        {chats.length <= 0 ? <Grid>You have no chats yet!</Grid> : null}
       </Grid>
     </>
   );

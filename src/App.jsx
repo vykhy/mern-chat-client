@@ -1,9 +1,11 @@
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState, useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SocketContextProvider from "./contexts/socketContext";
 import "./App.css";
 import { useAuthContext } from "./contexts/authContext";
 import useAxiosPrivate from "./hooks/useAxiosPrivate";
+import chatReducer from "./reducers/chatReducer";
+import Header from "./components/Header";
 
 const Home = lazy(() => import("./pages/Home"));
 const Contacts = lazy(() => import("./pages/Contacts"));
@@ -17,12 +19,7 @@ const App = () => {
   const axiosPrivate = useAxiosPrivate();
   const loggedIn = user !== null;
 
-  const fakeChats = [
-    { id: "lmao", messages: [] },
-    { id: "cow", messages: [] },
-  ];
-  const [chats, setChats] = useState(fakeChats);
-  const [random, setRandom] = useState(true);
+  const [chats, dispatch] = useReducer(chatReducer, []);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -46,36 +43,23 @@ const App = () => {
 
   useEffect(() => {
     const fetchAndSetChats = async () => {
-      console.log("chats fetched...");
       // fetch chats
       const response = await axiosPrivate.get("/chats");
       const data = response.data;
-      setChats(data.chats);
-      console.log(chats);
+      dispatch({ type: "loaded-messages", payload: data.chats });
+      // setChats(data.chats);
       // fetch contacts
       // map chat to contacts
     };
     fetchAndSetChats();
   }, []);
 
-  const triggerRerender = () => {
-    setRandom((prevState) => !prevState);
-  };
   const addNewChat = (data) => {
-    let chat = {
-      _id: data.chat._id,
-      messages: [data.message],
-    };
-    chats.push(chat);
+    dispatch({ type: "new-chat", payload: data });
   };
 
   const addMessage = (data) => {
-    setChats((chats) =>
-      chats
-        .find((chat) => chat._id === data.message.chatId)
-        .messages.push(data.message)
-    );
-    console.log(chats);
+    dispatch({ type: "new-message", payload: data });
   };
   return (
     <div>
@@ -84,6 +68,7 @@ const App = () => {
         <Suspense fallback={"Loading"}>
           {loggedIn ? (
             <SocketContextProvider id={user.id}>
+              <Header />
               <Routes>
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route
@@ -93,11 +78,13 @@ const App = () => {
                       chats={chats}
                       addNewChat={addNewChat}
                       addMessage={addMessage}
-                      triggerRerender={triggerRerender}
                     />
                   }
                 />
-                <Route path="/contacts" element={<Contacts />} />
+                <Route
+                  path="/contacts"
+                  element={<Contacts chats={chats} dispatch={dispatch} />}
+                />
                 <Route path="/contacts/add" element={<AddContact />} />
                 <Route path="*" element={<Home />} />
               </Routes>

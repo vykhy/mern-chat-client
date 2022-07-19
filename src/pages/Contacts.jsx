@@ -1,20 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Contact from "../components/Contact";
 import Box from "@mui/material/Box";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import MenuList from "@mui/material/MenuList";
-import MenuItem from "@mui/material/MenuItem";
-import { Divider } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const Contacts = () => {
+const Contacts = ({ chats, dispatch }) => {
   const [contacts, setContacts] = useState([]);
-  const secondary = true;
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -31,20 +24,12 @@ const Contacts = () => {
           {contacts
             ?.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map((contact, idx) => (
-              <MenuItem key={idx}>
-                <Link to={`/chats/${contact.contactId._id}`}>
-                  <ListItemAvatar>
-                    <Avatar src={contact.img || "/images/default-user.png"} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    cursor={"pointer"}
-                    primary={contact.name}
-                    secondary={secondary ? contact.contactId.email : null}
-                  />
-                </Link>
-
-                <Divider />
-              </MenuItem>
+              <Contact
+                key={idx}
+                contact={contact}
+                chats={chats}
+                dispatch={dispatch}
+              />
             ))}
         </MenuList>
       </Grid>

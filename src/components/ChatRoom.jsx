@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
@@ -6,16 +7,17 @@ import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
 
-function ChatRoom({ id, chats }) {
+function ChatRoom({ chatId, chats }) {
   const [message, setMessage] = useState("");
   const { user } = useAuthContext();
+  const { id } = useParams();
   const [chat, setChat] = useState(
-    chats.find((chat) => chat._id === id) || null
+    chats?.find((chat) => chat?._id === id) || null
   );
   useEffect(() => {
+    if (!chats) return;
     setChat(chats.find((chat) => chat._id === id) || null);
   }, [id, chats]);
-  console.log("chatroom rerendered");
   // id of current user
   const currentUserId = user.id;
   // get the id of recipient by filtering users from chat whose id does not match
@@ -23,10 +25,11 @@ function ChatRoom({ id, chats }) {
   // this list has only two users => [currentUser, recipient]
   // if chat is new, chat will be null and the id prop will be a userId
   // which will be the recipient id and a new chat will be created
-  const recipientId = chat?.users.find((user) => user !== currentUserId) || id;
-
-  const { socket } = useSocket();
+  let recipientId = chat && chat.users.find((user) => user !== currentUserId);
+  recipientId = !recipientId ? id : recipientId;
+  console.log(recipientId);
   console.log(chat);
+  const { socket } = useSocket();
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -34,8 +37,7 @@ function ChatRoom({ id, chats }) {
     // get the chat id from chat prop
     // if it is a new chat, chat value will be null
     // and server will create a new chat automatically
-    let chatId = chat._id || null;
-    console.log("sending...");
+    let chatId = chat?._id || null;
     // send to chat id
     // if it is a new chat, we will send the userId of the recipient
     // when the server doesnt find the chat id, it will create a new chat
