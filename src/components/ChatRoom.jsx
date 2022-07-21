@@ -6,14 +6,26 @@ import { useState } from "react";
 import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
+import Message from "./Message";
 
 function ChatRoom({ chatId, chats }) {
   const [message, setMessage] = useState("");
+  const [formWidth, setFormWidth] = useState("500px");
   const { user } = useAuthContext();
   const { id } = useParams();
+
   const [chat, setChat] = useState(
     chats?.find((chat) => chat?._id === id) || null
   );
+  useEffect(() => {
+    const getWidth = () => {
+      const width = document.getElementById("messageContainer").clientWidth;
+      setFormWidth(`${width}px`);
+    };
+    getWidth();
+    window.addEventListener("resize", getWidth);
+    return () => window.removeEventListener("resize", getWidth);
+  }, []);
   useEffect(() => {
     if (!chats) return;
     setChat(chats.find((chat) => chat._id === id) || null);
@@ -28,8 +40,8 @@ function ChatRoom({ chatId, chats }) {
   // which will be the recipient id and a new chat will be created
   let recipientId = chat && chat.users.find((user) => user !== currentUserId);
   recipientId = !recipientId ? id : recipientId;
-  console.log(recipientId);
-  console.log(chat);
+  // console.log(recipientId);
+  // console.log(chat);
   const { socket } = useSocket();
 
   const handleSendMessage = (e) => {
@@ -53,64 +65,78 @@ function ChatRoom({ chatId, chats }) {
     setMessage("");
   };
   return (
-    <div>
-      <Box fullHeight sx={{ height: "100vh", position: "relative" }}>
-        {message}
+    <Box
+      sx={{
+        minHeight: "100%",
+        maxHeight: "100%",
+        display: "flex",
+        width: "100%",
+        flexDirection: "column",
+      }}
+    >
+      <Box
+        style={{ overflowY: "scroll", paddingBottom: "55px" }}
+        id="messageContainer"
+      >
         <Box
           sx={{
-            position: "absolute",
-            top: "100%",
             width: "100%",
-            transform: "translateY(-100%)",
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           {chat?.messages?.map((message, idx) => (
-            <Box key={idx}>
-              <Box>
-                <b>{message.userId}</b>
-                <br />
-                {message.message}
-              </Box>
-            </Box>
+            <Message key={idx} message={message} />
           ))}
-          <form
-            style={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
-            onSubmit={handleSendMessage}
-          >
-            <TextField
-              id="outlined-basic"
-              label="Type your message..."
-              variant="outlined"
-              sx={{
-                padding: "0px",
-              }}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              fullWidth
-            />
-
-            <button
-              type="submit"
-              style={{
-                backgroundColor: "blue",
-                borderRadius: "50%",
-                border: "none",
-                cursor: "pointer",
-                width: "55px",
-                marginLeft: "3px",
-              }}
-              disabled={message === ""}
-            >
-              <SendIcon color="action" />
-            </button>
-          </form>
         </Box>
       </Box>
-    </div>
+      <Box
+        style={{
+          position: "absolute",
+          top: "100%",
+          width: formWidth,
+          transform: "translateY(-100%)",
+          backgroundColor: "white",
+        }}
+      >
+        <form
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+          onSubmit={handleSendMessage}
+        >
+          <TextField
+            id="outlined-basic"
+            label="Type your message..."
+            variant="outlined"
+            sx={{
+              padding: "0px",
+            }}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            fullWidth
+          />
+
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "blue",
+              borderRadius: "50%",
+              border: "none",
+              cursor: "pointer",
+              width: "55px",
+              marginLeft: "3px",
+            }}
+            disabled={message === ""}
+          >
+            <SendIcon color="action" />
+          </button>
+        </form>
+      </Box>
+    </Box>
   );
 }
 

@@ -14,7 +14,7 @@ const Home = ({ chats }) => {
 
   useEffect(() => {
     if (window.innerWidth > 768) {
-      navigate(`/chats/${chats[0]?._id}`);
+      navigate(`/chats`);
     }
   }, []);
 
@@ -34,12 +34,6 @@ const Home = ({ chats }) => {
 
   return (
     <div>
-      <h1>Home</h1>
-      <p>
-        {user !== null
-          ? `You are logged in as ${user.name}`
-          : "There is no user"}
-      </p>
       {text && <p>{text}</p>}
       <button onClick={() => setNewUser("Marco o7")}>Log in</button>
       <button onClick={() => handleLogout()}>Log out</button>

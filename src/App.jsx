@@ -78,7 +78,6 @@ const App = () => {
   };
   return (
     <div>
-      {user && <p>You are now logged in {user.name}</p>}
       <BrowserRouter>
         <Suspense fallback={"Loading"}>
           {loggedIn ? (

@@ -7,7 +7,7 @@ function Header() {
     <>
       <Grid container marginBottom={"20px"}>
         <Grid item xs={4}>
-          <Link to="/chats">Chats</Link>
+          <Link to="/">Chats</Link>
         </Grid>
         <Grid item xs={4}>
           <Link to="/contacts">Contacts</Link>

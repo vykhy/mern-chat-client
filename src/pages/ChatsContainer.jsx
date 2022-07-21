@@ -10,7 +10,6 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   let { id } = useParams();
-  if (!id) id = chats[0]?._id;
 
   useEffect(() => {
     socket?.on("new-message", (data) => handleNewMessage(data));
@@ -32,7 +31,6 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
       return;
     } else {
       const contact = await axiosPrivate.get(`/contacts/${message.authorId}`);
-      console.log(contact);
       chat.contact = contact.data;
       chat.messages = [message];
       addNewChat(chat);
@@ -48,12 +46,29 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
   };
   return (
     <>
-      <Grid container>
-        <Grid item sx={{ display: { xs: "none", sm: "block" } }} sm={3}>
+      <Grid container style={{ height: "95%" }}>
+        <Grid
+          item
+          sx={{ display: { xs: "none", sm: "block" } }}
+          sm={3}
+          style={{ height: "95%", overflowY: "scroll" }}
+        >
           <Chats chats={chats}></Chats>
         </Grid>
-        <Grid item xs={12} sm={9}>
-          <ChatRoom chatId={id} chats={chats} />
+        <Grid
+          item
+          xs={12}
+          sm={9}
+          style={{
+            height: "95%",
+            // overflowY: "scroll",
+          }}
+        >
+          {id ? (
+            <ChatRoom chatId={id} chats={chats} />
+          ) : (
+            <h3>Click on a chat to open.</h3>
+          )}
         </Grid>
         {chats.length <= 0 ? <Grid>You have no chats yet!</Grid> : null}
       </Grid>
