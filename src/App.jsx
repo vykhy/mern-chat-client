@@ -52,30 +52,23 @@ const App = () => {
       const contacts = contactResponse.data.contacts;
       // map chat to contacts
       chats.forEach((chat) => {
-        chat.contact =
-          contacts.find((contact) =>
-            // find chat where user id of contact and chat match
-            // filter chat users array because the current user is in all the chats
-            // and it caused the name of current user to be rendered on every chat
-            chat.users
-              .filter((id) => user.id != id)
-              .includes(contact.contactId._id)
+        // remove current user from chat users list
+        chat.users = chat.users.find((user) => user._id !== user.id);
+        const contact =
+          contacts.find(
+            (contact) =>
+              // find chat where user id of contact and chat match
+              chat.users._id == contact.contactId._id
           ) || null;
+        chat.contact = contact?.name || null;
       });
       // console.log(contacts);
-      // console.log(chats);
+      console.log(chats);
       dispatch({ type: "loaded-messages", payload: chats });
     };
     fetchAndSetChats();
-  }, [axiosPrivate, loggedIn, user.id]);
+  }, [axiosPrivate, loggedIn, user?.id]);
 
-  const addNewChat = (data) => {
-    dispatch({ type: "new-chat", payload: data });
-  };
-
-  const addMessage = (data) => {
-    dispatch({ type: "new-message", payload: data });
-  };
   return (
     <div>
       <BrowserRouter>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { Button, Divider } from "@mui/material";
 import { Grid } from "@mui/material";
@@ -13,12 +13,14 @@ import { useAuthContext } from "../contexts/authContext";
 function Contact({ contact, chats, dispatch }) {
   const secondary = true;
   const axiosPrivate = useAxiosPrivate();
+  let chatExists;
   const {
     user: { id },
   } = useAuthContext();
-  const chatExists = chats.find((chat) =>
-    chat?.users.includes(contact.contactId._id)
-  );
+
+  chatExists =
+    chats.length > 0 &&
+    chats.find((chat) => chat.users._id === contact.contactId._id);
 
   const createChat = async () => {
     const response = await axiosPrivate.post("/chats/create", {
@@ -30,11 +32,10 @@ function Contact({ contact, chats, dispatch }) {
     );
     const chatContact = contactResponse.data;
     let newChat = response.data;
-    console.log(chatContact);
-    newChat.contact = chatContact;
+    newChat.users = newChat.users.find((user) => user._id !== id);
+    newChat.contact = chatContact.name;
     newChat.messages = [];
     dispatch({ type: "new-chat", payload: newChat });
-    console.log(newChat);
   };
   return (
     <MenuItem>

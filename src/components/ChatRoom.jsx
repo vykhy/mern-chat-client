@@ -63,7 +63,7 @@ function ChatRoom({ chats }) {
   // id of current user
   const currentUserId = user.id;
 
-  recipientId = chat && chat.users.find((user) => user !== currentUserId);
+  recipientId = chat && chat.users._id;
   recipientId = !recipientId ? id : recipientId;
   const handleSendMessage = (e) => {
     e.preventDefault();

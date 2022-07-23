@@ -15,17 +15,14 @@ function Chat({ chat }) {
         <Grid item xs={3}>
           <ListItemAvatar>
             <Avatar
-              src={
-                chat.contact?.contactId.profilePicture ||
-                "/images/default-user.png"
-              }
+              src={chat.users.profilePicture || "/images/default-user.png"}
             />
           </ListItemAvatar>
         </Grid>
         <Grid item xs={7} sx={{ overflow: "hidden" }}>
           <ListItemText
             cursor={"pointer"}
-            primary={chat.contact ? chat.contact.name : "unknown"}
+            primary={chat.contact ? chat.contact : chat.users.email}
             secondary={
               chat.messages.length > 0
                 ? chat.messages[chat.messages.length - 1].message

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Chats from "../components/Chats";
 import ChatRoom from "../components/ChatRoom";
 import { useSocket } from "../contexts/socketContext";
 import { useParams } from "react-router-dom";
-import { Grid, textFieldClasses } from "@mui/material";
+import { Grid } from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
@@ -35,8 +35,15 @@ function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
       return;
     } else {
       const contact = await axiosPrivate.get(`/contacts/${message.authorId}`);
-      chat.contact = contact.data;
+      chat.contact = contact.data.name;
+      message.delivered = new Date(Date.now());
       chat.messages = [message];
+
+      chat.users = chat.users.find(
+        (user) => user._id.valueOf() == message.authorId
+      );
+      message.time = message.delivered;
+      socket?.emit("message-delivered", message);
       addNewChat(chat);
     }
   };
@@ -55,6 +62,13 @@ function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
   };
   const handleMarkedAsDelivered = (data) => {
     dispatch({ type: "mark-as-delivered", payload: data });
+  };
+  const addNewChat = (data) => {
+    dispatch({ type: "new-chat", payload: data });
+  };
+
+  const addMessage = (data) => {
+    dispatch({ type: "new-message", payload: data });
   };
   return (
     <>
