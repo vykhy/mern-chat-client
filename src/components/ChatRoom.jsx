@@ -8,28 +8,56 @@ import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
 import Message from "./Message";
 
-function ChatRoom({ chatId, chats }) {
+function ChatRoom({ chats }) {
   const [message, setMessage] = useState("");
   const [formWidth, setFormWidth] = useState("500px");
   const { user } = useAuthContext();
   const { id } = useParams();
+  const { socket } = useSocket();
 
   const [chat, setChat] = useState(
     chats?.find((chat) => chat?._id === id) || null
   );
+
   useEffect(() => {
-    const getWidth = () => {
+    for (let i = chat?.messages.length - 1; i >= 0; i--) {
+      if (
+        chat.messages[i].read === null &&
+        chat.messages[i].authorId !== user.id
+      ) {
+        chat.messages[i].time = new Date(Date.now());
+        socket?.emit("message-read", chat.messages[i]);
+        chat.messages[i].time = null;
+      } else if (
+        chat.messages[i].read &&
+        chat.messages[i].authorId !== user.id
+      ) {
+        break;
+      }
+    }
+  }, [chat, chats, socket, user]);
+
+  // function to scroll to the bottom of a chat
+  const scrollToBottom = () => {
+    const element = document.getElementById("messageContainer");
+    element.scrollTop = element.scrollHeight;
+  };
+  // set message form width and scroll to bottom of the chatroom
+  useEffect(() => {
+    const setMessageFormWidth = () => {
       const width = document.getElementById("messageContainer").clientWidth;
       setFormWidth(`${width}px`);
     };
-    getWidth();
-    window.addEventListener("resize", getWidth);
-    return () => window.removeEventListener("resize", getWidth);
+    setMessageFormWidth();
+    scrollToBottom();
+    window.addEventListener("resize", setMessageFormWidth);
+    return () => window.removeEventListener("resize", setMessageFormWidth);
   }, []);
   useEffect(() => {
     if (!chats) return;
     setChat(chats.find((chat) => chat._id === id) || null);
   }, [id, chats]);
+
   let newChat;
   // id of current user
   const currentUserId = user.id;
@@ -42,7 +70,6 @@ function ChatRoom({ chatId, chats }) {
   recipientId = !recipientId ? id : recipientId;
   // console.log(recipientId);
   // console.log(chat);
-  const { socket } = useSocket();
 
   const handleSendMessage = (e) => {
     e.preventDefault();

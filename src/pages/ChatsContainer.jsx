@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { Grid, textFieldClasses } from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-function ChatsContainer({ chats, addMessage, addNewChat }) {
+function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   let { id } = useParams();
@@ -15,11 +15,13 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
     socket?.on("new-message", (data) => handleNewMessage(data));
     socket?.on("message-sent", (data) => handleMessageSent(data));
     socket?.on("new-chat-message", (data) => handleNewChat(data));
+    socket?.on("marked-as-read", (data) => handleMarkedAsRead(data));
 
     return () => {
       socket?.off("new-message");
       socket?.off("message-sent");
       socket?.off("new-chat-message");
+      socket?.off("marked-as-read");
     };
   }, [socket]);
 
@@ -44,6 +46,9 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
   const handleMessageSent = (data) => {
     addMessage(data);
   };
+  const handleMarkedAsRead = (data) => {
+    dispatch({ type: "mark-as-read", payload: data });
+  };
   return (
     <>
       <Grid container style={{ height: "95%" }}>
@@ -65,7 +70,7 @@ function ChatsContainer({ chats, addMessage, addNewChat }) {
           }}
         >
           {id ? (
-            <ChatRoom chatId={id} chats={chats} />
+            <ChatRoom chats={chats} dispatch={dispatch} />
           ) : (
             <h3>Click on a chat to open.</h3>
           )}

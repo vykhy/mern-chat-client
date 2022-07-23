@@ -12,13 +12,37 @@ const chatReducer = (state, action) => {
           break;
         }
       }
-      chat.messages.push(action.payload);
+      chat.messages = [...chat.messages, action.payload];
       state.splice(index, 1);
       return [chat, ...state];
     }
     case "new-chat": {
-      console.log(state, action.payload);
       return [action.payload, ...state];
+    }
+    case "mark-as-read": {
+      let chat, chatIndex, message, messageIndex;
+      for (let i = 0; i < state.length; i++) {
+        // find the chat to which the message belongs
+        if (state[i]._id === action.payload.chatId) {
+          for (let j = state[i].messages.length - 1; j >= 0; j--) {
+            // find the message to mark
+            if (state[i].messages[j]._id === action.payload.messageId) {
+              message = state[i].messages[j];
+              messageIndex = j;
+              break;
+            }
+          }
+          chat = state[i];
+          chatIndex = i;
+          break;
+        }
+      }
+      // mark the message as read with timestamp
+      message.read = action.payload.time;
+      chat.messages[messageIndex] = message;
+      state.splice(chatIndex, 1);
+      // changing chat in place did not trigger re-render so I have returned it this way
+      return [chat, ...state];
     }
     default:
       return state;

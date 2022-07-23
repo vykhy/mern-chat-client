@@ -33,14 +33,17 @@ function Message({ message }) {
         </Typography>
         {/* <Typography variant="h5" component="div">
             
-          </Typography>
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            adjective
           </Typography> */}
         <Typography variant="body2">
           {message.message}
           <br />
-          {}
+          <Typography sx={{ mt: 1.5 }} color="text.secondary">
+            {message.read
+              ? "Read"
+              : !message.read && message.delivered
+              ? "Delivered"
+              : "Sent"}
+          </Typography>
         </Typography>
       </CardContent>
       {/* <CardActions>

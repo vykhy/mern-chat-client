@@ -92,6 +92,7 @@ const App = () => {
                       chats={chats}
                       addNewChat={addNewChat}
                       addMessage={addMessage}
+                      dispatch={dispatch}
                     />
                   }
                 />
@@ -102,6 +103,7 @@ const App = () => {
                       chats={chats}
                       addNewChat={addNewChat}
                       addMessage={addMessage}
+                      dispatch={dispatch}
                     />
                   }
                 />
