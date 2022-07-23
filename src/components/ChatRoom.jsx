@@ -14,6 +14,7 @@ function ChatRoom({ chats }) {
   const { user } = useAuthContext();
   const { id } = useParams();
   const { socket } = useSocket();
+  let recipientId;
 
   const [chat, setChat] = useState(
     chats?.find((chat) => chat?._id === id) || null
@@ -61,16 +62,9 @@ function ChatRoom({ chats }) {
   let newChat;
   // id of current user
   const currentUserId = user.id;
-  // get the id of recipient by filtering users from chat whose id does not match
-  // current user Id
-  // this list has only two users => [currentUser, recipient]
-  // if chat is new, chat will be null and the id prop will be a userId
-  // which will be the recipient id and a new chat will be created
-  let recipientId = chat && chat.users.find((user) => user !== currentUserId);
-  recipientId = !recipientId ? id : recipientId;
-  // console.log(recipientId);
-  // console.log(chat);
 
+  recipientId = chat && chat.users.find((user) => user !== currentUserId);
+  recipientId = !recipientId ? id : recipientId;
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message === "") return;

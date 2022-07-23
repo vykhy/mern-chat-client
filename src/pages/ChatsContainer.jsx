@@ -16,14 +16,16 @@ function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
     socket?.on("message-sent", (data) => handleMessageSent(data));
     socket?.on("new-chat-message", (data) => handleNewChat(data));
     socket?.on("marked-as-read", (data) => handleMarkedAsRead(data));
+    socket?.on("marked-as-delivered", (data) => handleMarkedAsDelivered(data));
 
     return () => {
       socket?.off("new-message");
       socket?.off("message-sent");
       socket?.off("new-chat-message");
       socket?.off("marked-as-read");
+      socket?.off("marked-as-delivered");
     };
-  }, [socket]);
+  });
 
   const handleNewChat = async (data) => {
     const chat = data.chat;
@@ -37,17 +39,22 @@ function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
       chat.messages = [message];
       addNewChat(chat);
     }
-
-    // addNewMessage(message)
   };
   const handleNewMessage = (data) => {
+    data.delivered = new Date(Date.now());
     addMessage(data);
+    // emit to mark message as delivered
+    data.time = data.delivered;
+    socket?.emit("message-delivered", data);
   };
   const handleMessageSent = (data) => {
     addMessage(data);
   };
   const handleMarkedAsRead = (data) => {
     dispatch({ type: "mark-as-read", payload: data });
+  };
+  const handleMarkedAsDelivered = (data) => {
+    dispatch({ type: "mark-as-delivered", payload: data });
   };
   return (
     <>

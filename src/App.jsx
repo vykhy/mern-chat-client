@@ -39,7 +39,7 @@ const App = () => {
       }
     };
     verifyTokenFoundInStorage();
-  }, [user, accessToken]);
+  }, [user, accessToken, axiosPrivate, removeToken, removeUser]);
 
   useEffect(() => {
     if (!loggedIn) return;
@@ -67,7 +67,7 @@ const App = () => {
       dispatch({ type: "loaded-messages", payload: chats });
     };
     fetchAndSetChats();
-  }, []);
+  }, [axiosPrivate, loggedIn, user.id]);
 
   const addNewChat = (data) => {
     dispatch({ type: "new-chat", payload: data });
