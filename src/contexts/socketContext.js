@@ -4,7 +4,7 @@ import { useAuthContext } from "./authContext";
 
 export const SocketContext = createContext();
 
-function SocketContextProvider({ id, children }) {
+function SocketContextProvider({ children }) {
   const [socket, setSocket] = useState(null);
   const { user } = useAuthContext();
 
@@ -20,7 +20,7 @@ function SocketContextProvider({ id, children }) {
     return () => {
       newSocket.disconnect();
     };
-  }, [id, user]);
+  }, [user]);
   return (
     <SocketContext.Provider value={{ socket }}>
       {children}
