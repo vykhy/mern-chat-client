@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
+function ChatsContainer({ chats, dispatch }) {
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   let { id } = useParams();
@@ -40,7 +40,7 @@ function ChatsContainer({ chats, addMessage, addNewChat, dispatch }) {
       chat.messages = [message];
 
       chat.users = chat.users.find(
-        (user) => user._id.valueOf() == message.authorId
+        (user) => user._id.valueOf() === message.authorId
       );
       message.time = message.delivered;
       socket?.emit("message-delivered", message);

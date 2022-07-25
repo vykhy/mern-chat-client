@@ -21,6 +21,7 @@ const App = () => {
 
   const [chats, dispatch] = useReducer(chatReducer, []);
 
+  // verify token found in localStorage upon loading
   useEffect(() => {
     if (!accessToken) return;
     // Since we store our access token in local storage, we will verify this token
@@ -41,6 +42,7 @@ const App = () => {
     verifyTokenFoundInStorage();
   }, [user, accessToken, axiosPrivate, removeToken, removeUser]);
 
+  // fetch and set chats
   useEffect(() => {
     if (!loggedIn) return;
     const fetchAndSetChats = async () => {
@@ -53,12 +55,13 @@ const App = () => {
       // map chat to contacts
       chats.forEach((chat) => {
         // remove current user from chat users list
-        chat.users = chat.users.find((user) => user._id !== user.id);
+        chat.users = chat.users.find((tuser) => tuser._id !== user.id);
+        console.log(chat.users);
         const contact =
           contacts.find(
             (contact) =>
               // find chat where user id of contact and chat match
-              chat.users._id == contact.contactId._id
+              chat.users._id === contact.contactId._id
           ) || null;
         chat.contact = contact?.name || null;
       });
@@ -80,25 +83,11 @@ const App = () => {
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route
                   path="/chats"
-                  element={
-                    <ChatsContainer
-                      chats={chats}
-                      addNewChat={addNewChat}
-                      addMessage={addMessage}
-                      dispatch={dispatch}
-                    />
-                  }
+                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
                 />
                 <Route
                   path="/chats/:id"
-                  element={
-                    <ChatsContainer
-                      chats={chats}
-                      addNewChat={addNewChat}
-                      addMessage={addMessage}
-                      dispatch={dispatch}
-                    />
-                  }
+                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
                 />
                 <Route
                   path="/contacts"
