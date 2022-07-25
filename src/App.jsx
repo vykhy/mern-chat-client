@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useState, useReducer } from "react";
+import React, { Suspense, lazy, useEffect, useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { useAuthContext } from "./contexts/authContext";
@@ -57,7 +57,6 @@ const App = () => {
       chats.forEach((chat) => {
         // remove current user from chat users list
         chat.users = chat.users.find((tuser) => tuser._id !== user.id);
-        console.log(chat.users);
         const contact =
           contacts.find(
             (contact) =>
@@ -67,7 +66,6 @@ const App = () => {
         chat.contact = contact?.name || null;
       });
       // console.log(contacts);
-      console.log(chats);
       dispatch({ type: "loaded-messages", payload: chats });
     };
     fetchAndSetChats();
@@ -75,7 +73,7 @@ const App = () => {
 
   // socket event handlers
   useEffect(() => {
-    if (!user.id) return;
+    if (!user?.id) return;
 
     socket?.on("new-message", (data) => handleNewMessage(data));
     socket?.on("message-sent", (data) => handleMessageSent(data));
@@ -127,11 +125,9 @@ const App = () => {
   const handleMarkedAsDelivered = (data) => {
     dispatch({ type: "mark-as-delivered", payload: data });
   };
-
   const addNewChat = (data) => {
     dispatch({ type: "new-chat", payload: data });
   };
-
   const addMessage = (data) => {
     dispatch({ type: "new-message", payload: data });
   };
@@ -139,25 +135,27 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Suspense fallback={"Loading"}>
-          <Header />
           {loggedIn ? (
-            <Routes>
-              <Route path="/" element={<Home chats={chats} />} />
-              <Route
-                path="/chats"
-                element={<ChatsContainer chats={chats} dispatch={dispatch} />}
-              />
-              <Route
-                path="/chats/:id"
-                element={<ChatsContainer chats={chats} dispatch={dispatch} />}
-              />
-              <Route
-                path="/contacts"
-                element={<Contacts chats={chats} dispatch={dispatch} />}
-              />
-              <Route path="/contacts/add" element={<AddContact />} />
-              <Route path="*" element={<Home />} />
-            </Routes>
+            <>
+              <Header />
+              <Routes>
+                <Route path="/" element={<Home chats={chats} />} />
+                <Route
+                  path="/chats"
+                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
+                />
+                <Route
+                  path="/chats/:id"
+                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
+                />
+                <Route
+                  path="/contacts"
+                  element={<Contacts chats={chats} dispatch={dispatch} />}
+                />
+                <Route path="/contacts/add" element={<AddContact />} />
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </>
           ) : (
             <Routes>
               <Route path="/login" element={<Login />} />
