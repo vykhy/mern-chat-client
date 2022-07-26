@@ -12,9 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
-import { Button } from "@mui/material";
 
 export default function Header() {
   const { user, removeToken, removeUser } = useAuthContext();
@@ -39,6 +37,11 @@ export default function Header() {
           alignItems: "center",
           justifyContent: "space-between",
           textAlign: "center",
+        }}
+        style={{
+          zIndex: 5,
+          backgroundColor: "white",
+          boxShadow: "-1px 47px 78px -50px rgba(0,0,0,0.72)",
         }}
       >
         <Link

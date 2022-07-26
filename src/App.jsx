@@ -13,6 +13,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const AddContact = lazy(() => import("./pages/AddContact"));
 const ChatsContainer = lazy(() => import("./pages/ChatsContainer"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
@@ -153,6 +154,14 @@ const App = () => {
                   element={<Contacts chats={chats} dispatch={dispatch} />}
                 />
                 <Route path="/contacts/add" element={<AddContact />} />
+                <Route
+                  path="/profile"
+                  element={<Profile chats={chats} />}
+                ></Route>
+                <Route
+                  path="/profile/:id"
+                  element={<Profile chats={chats} />}
+                ></Route>
                 <Route path="*" element={<Home />} />
               </Routes>
             </>

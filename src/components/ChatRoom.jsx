@@ -7,6 +7,7 @@ import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
 import Message from "./Message";
+import ChatHeader from "./ChatHeader";
 
 function ChatRoom({ chats }) {
   const [message, setMessage] = useState("");
@@ -94,6 +95,12 @@ function ChatRoom({ chats }) {
         flexDirection: "column",
       }}
     >
+      <ChatHeader
+        name={chat?.contact || chat?.users.email}
+        lastSeen={chat?.users.lastSeen}
+        id={chat?.users._id}
+        img={chat?.users.profilePicture}
+      />
       <Box
         style={{ overflowY: "scroll", paddingBottom: "55px" }}
         id="messageContainer"
