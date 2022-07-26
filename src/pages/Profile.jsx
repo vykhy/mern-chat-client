@@ -15,32 +15,41 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function Profile({ chats }) {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { user } = useAuthContext();
-  const [profileUser, setProfileUser] = useState();
-  const [contactName, setContactName] = useState(null);
-  const [chatId, setChatId] = useState(null);
-  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const { id } = useParams(); // id of user. empty for current user profile
+  const axiosPrivate = useAxiosPrivate();
+  const { user } = useAuthContext(); // current user
+  const [profileUser, setProfileUser] = useState(); // profile details of the profile being viewed
+  const [contactName, setContactName] = useState(null); // contact name if this user has been saved
+  const [chatId, setChatId] = useState(null); // the chat id of the chat with this user
+  const [isOwnProfile, setIsOwnProfile] = useState(false); // whether we are viewing our own profile
   useEffect(() => {
+    // fetches details of a user by taking the user's id
+    const fetchUser = async (id) => {
+      const response = await axiosPrivate.get(`/users/${id}`);
+      const userDetails = response.data;
+      setProfileUser(userDetails);
+    };
+    // if there is no id or id is same as current user, get details of current user
     if (!id || id === user.id) {
-      const fetchUser = async () => {
-        console.log(user);
-        return "money";
-      };
-      setProfileUser(fetchUser());
+      fetchUser(user.id);
       setIsOwnProfile(true);
     } else {
+      // get details of whoever that user is
       const chatOfUser = chats?.find((chat) => chat.users._id === id);
-      setChatId(chatOfUser._id);
-      setContactName(chatOfUser.contact);
-      setProfileUser(chatOfUser.users);
+      setChatId(chatOfUser._id); // set the chat id
+      setContactName(chatOfUser.contact); //set contact name
+      fetchUser(id);
     }
-  }, [id, profileUser, user.id]);
+  }, [id, user.id]);
   const goToChat = () => {
     navigate(`/chats/${chatId}`);
+  };
+  const goToEditProfile = () => {
+    navigate("/profile/edit");
   };
   return (
     <Grid
@@ -52,7 +61,7 @@ function Profile({ chats }) {
       <Grid item xs={12} md={8} lg={6} style={{ backgroundColor: "white" }}>
         {/* boxShadow: "0px 0px 103px -29px rgba(0,0,0,0.72)", */}
         <Typography style={{ margin: "5px" }} variant={"h4"}>
-          {contactName || profileUser?.email}
+          {isOwnProfile ? "Your Profile" : contactName || profileUser?.email}
         </Typography>
         <Box
           fullWidth
@@ -84,7 +93,10 @@ function Profile({ chats }) {
         >
           <ListItem>
             <ListItemText
-              primary={`${profileUser?.firstName} ${profileUser?.lastName}`}
+              primary={
+                profileUser &&
+                `${profileUser?.firstName} ${profileUser?.lastName}`
+              }
               secondary={profileUser?.email}
             />
           </ListItem>
@@ -102,7 +114,16 @@ function Profile({ chats }) {
           <Divider component="li" />
         </List>
         {isOwnProfile ? (
-          "Edit Profile"
+          <MenuList
+            style={{ padding: "0px" }}
+            fullWidth
+            onClick={goToEditProfile}
+          >
+            <MenuItem fullWidth style={{ height: "40px" }}>
+              <ListItemText primary="Edit Profile" />
+              <ArrowForwardIos />
+            </MenuItem>
+          </MenuList>
         ) : (
           <MenuList style={{ padding: "0px" }} fullWidth onClick={goToChat}>
             <MenuItem fullWidth style={{ height: "40px" }}>

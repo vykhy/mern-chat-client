@@ -71,7 +71,10 @@ export default function Header() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar
+              src={user?.profilePicture || "/public/images/default-user.png"}
+              sx={{ width: 32, height: 32 }}
+            ></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -111,14 +114,36 @@ export default function Header() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem>
-          <Avatar /> My Profile
+          <Link
+            to="/profile"
+            onClick={handleClose}
+            style={{
+              display: "flex",
+              color: "black",
+              textAlign: "center",
+              alignItems: "center",
+            }}
+          >
+            <Avatar
+              src={user?.profilePicture || "/public/images/default-user.png"}
+            />{" "}
+            My Profile
+          </Link>
         </MenuItem>
         {/* <MenuItem>
           <Avatar /> My account
         </MenuItem> */}
         <Divider />
-        <MenuItem>
-          <Link onClick={handleClose} to="/contacts/add">
+        <MenuItem onClick={handleClose}>
+          <Link
+            style={{
+              display: "flex",
+              color: "black",
+              textAlign: "center",
+              alignItems: "center",
+            }}
+            to="/contacts/add"
+          >
             <ListItemIcon>
               <PersonAdd fontSize="small" />
             </ListItemIcon>
