@@ -94,6 +94,7 @@ const App = () => {
   });
   const handleNewChat = async (data) => {
     const chat = data.chat;
+    console.log('new-chat')
     const message = data.message;
     if (chats.find((chat) => chat._id === data.chat._id)) {
       addMessage(message);
@@ -113,6 +114,7 @@ const App = () => {
     }
   };
   const handleNewMessage = (data) => {
+    console.log('new-message')
     data.delivered = new Date(Date.now());
     addMessage(data);
     // emit to mark message as delivered
@@ -120,12 +122,15 @@ const App = () => {
     socket?.emit("message-delivered", data);
   };
   const handleMessageSent = (data) => {
+    console.log('message-sent')
     addMessage(data);
   };
   const handleMarkedAsRead = (data) => {
+    console.log('mark as read')
     dispatch({ type: "mark-as-read", payload: data });
   };
-  const handleMarkedAsDelivered = (data) => {
+  const handleMarkedAsDelivered = (data) => {    
+    console.log('mark as delivered')
     dispatch({ type: "mark-as-delivered", payload: data });
   };
   const addNewChat = (data) => {

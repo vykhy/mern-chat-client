@@ -11,7 +11,7 @@ export default axios.create();
  */
 export const axiosPrivate = axios.create({
   headers: {
-    "Content-Type": "multipart/form-data",
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
