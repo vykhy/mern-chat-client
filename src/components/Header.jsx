@@ -72,7 +72,7 @@ export default function Header() {
             aria-expanded={open ? "true" : undefined}
           >
             <Avatar
-              src={user?.profilePicture || "/public/images/default-user.png"}
+              src={user?.thumbnail || "/images/default-user.png"}
               sx={{ width: 32, height: 32 }}
             ></Avatar>
           </IconButton>
@@ -113,10 +113,9 @@ export default function Header() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleClose}>
           <Link
             to="/profile"
-            onClick={handleClose}
             style={{
               display: "flex",
               color: "black",
@@ -124,10 +123,8 @@ export default function Header() {
               alignItems: "center",
             }}
           >
-            <Avatar
-              src={user?.profilePicture || "/public/images/default-user.png"}
-            />{" "}
-            My Profile
+            <Avatar src={user?.thumbnail || "/images/default-user.png"} /> My
+            Profile
           </Link>
         </MenuItem>
         {/* <MenuItem>

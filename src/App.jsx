@@ -14,6 +14,8 @@ const Signup = lazy(() => import("./pages/Signup"));
 const AddContact = lazy(() => import("./pages/AddContact"));
 const ChatsContainer = lazy(() => import("./pages/ChatsContainer"));
 const Profile = lazy(() => import("./pages/Profile"));
+const EditProfileImage = lazy(() => import("./pages/EditProfileImage"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
 
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
@@ -158,10 +160,16 @@ const App = () => {
                   path="/profile"
                   element={<Profile chats={chats} />}
                 ></Route>
+                <Route path="/profile/edit" element={<EditProfile />} />
+                <Route
+                  path="/profile/image"
+                  element={<EditProfileImage img={user?.img} />}
+                />
                 <Route
                   path="/profile/:id"
                   element={<Profile chats={chats} />}
                 ></Route>
+
                 <Route path="*" element={<Home />} />
               </Routes>
             </>

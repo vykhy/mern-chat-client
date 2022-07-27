@@ -43,7 +43,9 @@ function Contact({ contact, chats, dispatch }) {
       <Grid container>
         <Grid item xs={3}>
           <ListItemAvatar>
-            <Avatar src={contact.img || "/images/default-user.png"} />
+            <Avatar
+              src={contact.contactId.thumbnail || "/images/default-user.png"}
+            />
           </ListItemAvatar>
         </Grid>
         <Grid item xs={6}>

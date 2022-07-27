@@ -37,6 +37,7 @@ function ChatRoom({ chats }) {
         break;
       }
     }
+    recipientId = chat && chat.users._id;
   }, [chat, chats, socket, user]);
 
   // function to scroll to the bottom of a chat
@@ -64,7 +65,6 @@ function ChatRoom({ chats }) {
   // id of current user
   const currentUserId = user.id;
 
-  recipientId = chat && chat.users._id;
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message === "") return;
@@ -99,7 +99,7 @@ function ChatRoom({ chats }) {
         name={chat?.contact || chat?.users.email}
         lastSeen={chat?.users.lastSeen}
         id={chat?.users._id}
-        img={chat?.users.profilePicture}
+        img={chat?.users.thumbnail}
       />
       <Box
         style={{ overflowY: "scroll", paddingBottom: "55px" }}

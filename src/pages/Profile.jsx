@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { ArrowForwardIos } from "@mui/icons-material";
 import {
   Grid,
@@ -74,9 +74,7 @@ function Profile({ chats }) {
           }}
         >
           <Avatar
-            src={
-              profileUser?.profilePicture || "/public/images/default-user.png"
-            }
+            src={profileUser?.profilePicture || "/images/default-user.png"}
             sx={{
               height: 350,
               width: 350,
@@ -91,6 +89,17 @@ function Profile({ chats }) {
             bgcolor: "background.paper",
           }}
         >
+          {isOwnProfile && (
+            <Link to="/profile/image">
+              <MenuList style={{ padding: "0px" }} fullWidth>
+                <MenuItem fullWidth style={{ height: "40px" }}>
+                  <ListItemText primary="Edit Profile Picture" />
+                  <ArrowForwardIos />
+                </MenuItem>
+                <Divider component="li" />
+              </MenuList>
+            </Link>
+          )}
           <ListItem>
             <ListItemText
               primary={

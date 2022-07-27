@@ -14,9 +14,7 @@ function Chat({ chat }) {
       <Grid container>
         <Grid item xs={3}>
           <ListItemAvatar>
-            <Avatar
-              src={chat.users.profilePicture || "/images/default-user.png"}
-            />
+            <Avatar src={chat.users.thumbnail || "/images/default-user.png"} />
           </ListItemAvatar>
         </Grid>
         <Grid item xs={7} sx={{ overflow: "hidden" }}>

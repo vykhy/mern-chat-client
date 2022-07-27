@@ -18,9 +18,7 @@ function ChatHeader({ img, name, lastSeen, id }) {
       <MenuList onClick={goToUserProfile} style={{ cursor: "pointer" }}>
         <MenuItem>
           <ListItemAvatar>
-            <Avatar
-              src={img ? img : "/public/images/default-user.png"}
-            ></Avatar>
+            <Avatar src={img ? img : "/images/default-user.png"}></Avatar>
           </ListItemAvatar>
           <ListItemText primary={name} secondary={lastSeen}></ListItemText>
         </MenuItem>
