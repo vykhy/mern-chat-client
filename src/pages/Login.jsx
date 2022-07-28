@@ -89,11 +89,12 @@ const Login = () => {
         return;
       }
       // update context with user data
-      const { userId, userName, thumbnail, accessToken } = resData;
+      const { userId, userName, thumbnail, profilePicture, accessToken } = resData;
       setNewUser({
         id: userId,
         name: userName,
         thumbnail,
+        profilePicture
       });
       updateTokens(accessToken);
     } catch (err) {

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
 
 import Box from "@mui/material/Box";
@@ -16,14 +16,19 @@ import Logout from "@mui/icons-material/Logout";
 
 export default function Header() {
   const { user, removeToken, removeUser } = useAuthContext();
+  const navigate = useNavigate();
   const handleLogout = () => {
     removeUser();
     removeToken();
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const goTo = (url) => {
+    handleClose();
+    navigate(url);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -78,88 +83,70 @@ export default function Header() {
           </IconButton>
         </Tooltip>
       </Box>
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
+      {open && (
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
             },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem onClick={handleClose}>
-          <Link
-            to="/profile"
-            style={{
-              display: "flex",
-              color: "black",
-              textAlign: "center",
-              alignItems: "center",
-            }}
-          >
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <MenuItem onClick={() => goTo("/profile")}>
             <Avatar src={user?.thumbnail || "/images/default-user.png"} /> My
             Profile
-          </Link>
-        </MenuItem>
-        {/* <MenuItem>
+          </MenuItem>
+          {/* <MenuItem>
           <Avatar /> My account
         </MenuItem> */}
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <Link
-            style={{
-              display: "flex",
-              color: "black",
-              textAlign: "center",
-              alignItems: "center",
-            }}
-            to="/contacts/add"
-          >
+          <Divider />
+          <MenuItem onClick={() => goTo("/contacts/add")}>
             <ListItemIcon>
               <PersonAdd fontSize="small" />
             </ListItemIcon>
             Add new Contact
-          </Link>
-        </MenuItem>
-        {/* <MenuItem>
+          </MenuItem>
+          {/* <MenuItem>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           Settings
         </MenuItem> */}
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
+      )}
     </React.Fragment>
   );
 }

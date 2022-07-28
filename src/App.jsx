@@ -168,7 +168,7 @@ const App = () => {
                 <Route path="/profile/edit" element={<EditProfile />} />
                 <Route
                   path="/profile/image"
-                  element={<EditProfileImage img={user?.img} />}
+                  element={<EditProfileImage img={user?.profilePicture} />}
                 />
                 <Route
                   path="/profile/:id"
