@@ -1,23 +1,48 @@
-import { Camera, Delete } from "@mui/icons-material";
+import React, { useState } from "react";
+import { AddPhotoAlternate, Delete, FileUpload } from "@mui/icons-material";
 import {
   Avatar,
-  MenuList,
-  MenuItem,
+  List,
+  ListItem,
   Grid,
   Box,
   Divider,
   Button,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
-import React, { useState } from "react";
-import { axiosPrivate } from "../api/axios";
+import Backdrop from "@mui/material/Backdrop";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
+import Typography from "@mui/material/Typography";
 import { useAuthContext } from "../contexts/authContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "1px solid #fff",
+  borderRadius: "5px",
+  boxShadow: 24,
+  p: 4,
+};
 
 function EditProfileImage({ img }) {
   const [currentImage, setCurrentImage] = useState(img);
   const [newImage, setNewImage] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const axiosPrivate = useAxiosPrivate();
-  const { setNewUser } = useAuthContext();
+  const { user, setNewUser } = useAuthContext();
+
+  // Delete modal state
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,15 +54,36 @@ function EditProfileImage({ img }) {
         formData
       );
       setNewUser(response.data);
+      setSuccess(true);
       //console.log(response.data);
     } catch (error) {
       console.log(error);
+      setError(true);
     }
   };
   const handleFileSelect = (e) => {
     if (e.target.files.length < 1) return;
     setNewImage(e.target.files[0]);
     setCurrentImage(URL.createObjectURL(e.target.files[0]));
+  };
+  const removeProfilePicture = async () => {
+    try {
+      const response = await axiosPrivate.delete("/users/profile-image");
+      const removed = response.data.removed;
+      if (removed) {
+        setNewUser({
+          id: user.id,
+          name: user.name,
+          thumbnail: null,
+          profilePicture: null,
+        });
+        setSuccess(true);
+        setCurrentImage(null);
+        handleClose();
+      }
+    } catch (err) {
+      setError(true);
+    }
   };
   return (
     <Grid
@@ -47,6 +93,18 @@ function EditProfileImage({ img }) {
       style={{ backgroundColor: "rgb(230,230,230)" }}
     >
       <Grid item xs={12} md={8} lg={6} style={{ backgroundColor: "white" }}>
+        {success && (
+          <Alert severity="success">
+            <AlertTitle>Success</AlertTitle>
+            Profile picture updated!
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="severe">
+            <AlertTitle>Failed</AlertTitle>
+            There was an error
+          </Alert>
+        )}
         <Box
           fullWidth
           style={{
@@ -69,9 +127,14 @@ function EditProfileImage({ img }) {
             }}
           />
         </Box>
-        <MenuList>
+        <List>
           <form encType="multipart">
-            <MenuItem>
+            <ListItem>
+              <Avatar
+                style={{ marginRight: "5px", backgroundColor: "#1769aa" }}
+              >
+                <AddPhotoAlternate />
+              </Avatar>
               <Button variant="contained" component="label" color="primary">
                 {" "}
                 Select new image
@@ -80,10 +143,15 @@ function EditProfileImage({ img }) {
               {/* <Avatar style={{ marginRight: '5px'}}>
               <Camera />
             </Avatar>             */}
-            </MenuItem>
+            </ListItem>
             <Divider component="li" />
             {newImage && (
-              <MenuItem>
+              <ListItem>
+                <Avatar
+                  style={{ marginRight: "5px", backgroundColor: "#1769aa" }}
+                >
+                  <FileUpload />
+                </Avatar>
                 <Button
                   variant="contained"
                   component="label"
@@ -93,18 +161,53 @@ function EditProfileImage({ img }) {
                   {" "}
                   Upload selected image
                 </Button>
-              </MenuItem>
+              </ListItem>
             )}
           </form>
           {newImage && <Divider component="li" />}
-          <MenuItem>
-            <Avatar style={{ marginRight: "5px" }}>
+          <ListItem>
+            <Avatar style={{ marginRight: "5px", backgroundColor: "#e53935" }}>
               <Delete />
             </Avatar>
-            Remove Profile Picture
-          </MenuItem>
-        </MenuList>
+            <Button
+              variant="contained"
+              component="button"
+              style={{ backgroundColor: "#e53935" }}
+              onClick={handleOpen}
+            >
+              Remove Profile Picture
+            </Button>
+          </ListItem>
+        </List>
       </Grid>
+      {/* Delete modal */}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Are you sure you want to remove your profile picture?
+            </Typography>
+            <Button
+              variant="contained"
+              component="button"
+              style={{ backgroundColor: "#e53935", marginTop: "15px" }}
+              onClick={removeProfilePicture}
+            >
+              Remove
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </Grid>
   );
 }
