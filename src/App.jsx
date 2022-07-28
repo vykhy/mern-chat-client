@@ -60,6 +60,7 @@ const App = () => {
       chats.forEach((chat) => {
         // remove current user from chat users list
         chat.users = chat.users.find((tuser) => tuser._id !== user.id);
+        // set chat contact
         const contact =
           contacts.find(
             (contact) =>
@@ -74,6 +75,29 @@ const App = () => {
     fetchAndSetChats();
   }, [axiosPrivate, loggedIn, user?.id]);
 
+  // goes through chats and marks messages received when user was offline as delivered
+  useEffect(() => {
+    if (!socket) return;
+    chats.forEach((chat) => {
+      for (let i = chat.messages.length - 1; i >= 0; i--) {
+        if (
+          chat.messages[i].delivered === null &&
+          chat.messages[i].authorId !== user.id
+        ) {
+          const now = new Date(Date.now());
+          chat.messages[i].delivered = now;
+          chat.messages[i]["time"] = now;
+          socket.emit("message-delivered", chat.messages[i]);
+          chat.messages[i].time = null;
+        } else if (
+          chat.messages[i].delivered &&
+          chat.messages[i].authorId !== user.id
+        ) {
+          break;
+        }
+      }
+    });
+  }, [socket, chats]);
   // socket event handlers
   useEffect(() => {
     if (!user?.id) return;
@@ -94,7 +118,7 @@ const App = () => {
   });
   const handleNewChat = async (data) => {
     const chat = data.chat;
-    console.log('new-chat')
+    console.log("new-chat");
     const message = data.message;
     if (chats.find((chat) => chat._id === data.chat._id)) {
       addMessage(message);
@@ -114,7 +138,7 @@ const App = () => {
     }
   };
   const handleNewMessage = (data) => {
-    console.log('new-message')
+    console.log("new-message");
     data.delivered = new Date(Date.now());
     addMessage(data);
     // emit to mark message as delivered
@@ -122,15 +146,15 @@ const App = () => {
     socket?.emit("message-delivered", data);
   };
   const handleMessageSent = (data) => {
-    console.log('message-sent')
+    console.log("message-sent");
     addMessage(data);
   };
   const handleMarkedAsRead = (data) => {
-    console.log('mark as read')
+    console.log("mark as read");
     dispatch({ type: "mark-as-read", payload: data });
   };
-  const handleMarkedAsDelivered = (data) => {    
-    console.log('mark as delivered')
+  const handleMarkedAsDelivered = (data) => {
+    console.log("mark as delivered");
     dispatch({ type: "mark-as-delivered", payload: data });
   };
   const addNewChat = (data) => {
