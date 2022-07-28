@@ -100,7 +100,7 @@ function EditProfileImage({ img }) {
           </Alert>
         )}
         {error && (
-          <Alert severity="severe">
+          <Alert severity="error">
             <AlertTitle>Failed</AlertTitle>
             There was an error
           </Alert>
