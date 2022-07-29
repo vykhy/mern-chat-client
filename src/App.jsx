@@ -163,6 +163,13 @@ const App = () => {
   const addMessage = (data) => {
     dispatch({ type: "new-message", payload: data });
   };
+  // function to scroll to the bottom of a chat
+  const scrollToBottom = () => {
+    const element = document.getElementById("messageContainer");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  };
   return (
     <div>
       <BrowserRouter>
@@ -173,12 +180,13 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route
-                  path="/chats"
-                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
-                />
-                <Route
                   path="/chats/:id"
-                  element={<ChatsContainer chats={chats} dispatch={dispatch} />}
+                  element={
+                    <ChatsContainer
+                      chats={chats}
+                      scrollToBottom={scrollToBottom}
+                    />
+                  }
                 />
                 <Route
                   path="/contacts"

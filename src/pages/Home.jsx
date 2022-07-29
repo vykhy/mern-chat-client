@@ -6,12 +6,6 @@ import Chats from "../components/Chats";
 const Home = ({ chats }) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (window.innerWidth > 768) {
-      navigate(`/chats`);
-    }
-  }, []);
-
   return (
     <div>
       <Grid container>
