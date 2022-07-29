@@ -63,8 +63,13 @@ function EditProfileImage({ img }) {
   };
   const handleFileSelect = (e) => {
     if (e.target.files.length < 1) return;
-    setNewImage(e.target.files[0]);
-    setCurrentImage(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      setError("Invalid file. Please choose an image");
+      return;
+    }
+    setNewImage(file);
+    setCurrentImage(URL.createObjectURL(file));
   };
   const removeProfilePicture = async () => {
     try {
@@ -82,7 +87,7 @@ function EditProfileImage({ img }) {
         handleClose();
       }
     } catch (err) {
-      setError(true);
+      setError("There was an error");
     }
   };
   return (
@@ -102,7 +107,7 @@ function EditProfileImage({ img }) {
         {error && (
           <Alert severity="error">
             <AlertTitle>Failed</AlertTitle>
-            There was an error
+            {error}
           </Alert>
         )}
         <Box
