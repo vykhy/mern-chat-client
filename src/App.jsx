@@ -115,7 +115,7 @@ const App = () => {
       socket?.off("marked-as-read");
       socket?.off("marked-as-delivered");
     };
-  });
+  }, [user, socket]);
   const handleNewChat = async (data) => {
     const chat = data.chat;
     console.log("new-chat");

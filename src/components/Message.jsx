@@ -1,12 +1,9 @@
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useAuthContext } from "../contexts/authContext";
 
-function Message({ message }) {
+function Message({ message, handlePopUp }) {
   const {
     user: { id },
   } = useAuthContext();
@@ -25,6 +22,7 @@ function Message({ message }) {
         color: color,
         alignSelf: alignSelf,
       }}
+      onClick={(e) => handlePopUp(e, message)}
     >
       {/* <Card variant="outlined">{card}</Card> */}
       <CardContent>

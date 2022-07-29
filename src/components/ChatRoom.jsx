@@ -8,6 +8,22 @@ import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
 import Message from "./Message";
 import ChatHeader from "./ChatHeader";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  maxWidth: "90%",
+  bgcolor: "white",
+  border: "none",
+  borderRadius: "5px",
+  boxShadow: 24,
+  p: 4,
+};
 
 function ChatRoom({ chats }) {
   const [message, setMessage] = useState("");
@@ -17,10 +33,19 @@ function ChatRoom({ chats }) {
   const { socket } = useSocket();
   let recipientId;
 
+  // MESSAGE DETALS POPUP
+  const [open, setOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(null);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  // FIND CURRENT CHAT FROM CHATS
   const [chat, setChat] = useState(
     chats?.find((chat) => chat?._id === id) || null
   );
 
+  // UPON OPENING, LOOP BACKWARDS AND MARK MESSAGES AS READ
+  // break when last read message found
   useEffect(() => {
     for (let i = chat?.messages.length - 1; i >= 0; i--) {
       if (
@@ -39,7 +64,7 @@ function ChatRoom({ chats }) {
     }
   }, [chat, chats, socket, user]);
 
-    recipientId = chat && chat.users._id;
+  recipientId = chat && chat.users._id;
   // function to scroll to the bottom of a chat
   const scrollToBottom = () => {
     const element = document.getElementById("messageContainer");
@@ -85,6 +110,13 @@ function ChatRoom({ chats }) {
     });
     setMessage("");
   };
+  const messageDetailsPopUpHandler = (e, message) => {
+    if (!message) return;
+    if (message.authorId === currentUserId) {
+      setPopupMessage(message);
+      handleOpen();
+    }
+  };
   return (
     <Box
       sx={{
@@ -94,14 +126,16 @@ function ChatRoom({ chats }) {
         width: "100%",
         flexDirection: "column",
       }}
+      className="chat-container"
     >
-      {chat && 
-      <ChatHeader
-        name={chat.contact || chat.users.email}
-        lastSeen={chat.users.lastSeen}
-        id={chat.users._id}
-        img={chat.users.thumbnail}
-      />}
+      {chat && (
+        <ChatHeader
+          name={chat.contact || chat.users.email}
+          lastSeen={chat.users.lastSeen}
+          id={chat.users._id}
+          img={chat.users.thumbnail}
+        />
+      )}
       <Box
         style={{ overflowY: "scroll", paddingBottom: "55px" }}
         id="messageContainer"
@@ -115,7 +149,12 @@ function ChatRoom({ chats }) {
           }}
         >
           {chat?.messages?.map((message, idx) => (
-            <Message key={idx} message={message} />
+            <Message
+              key={idx}
+              className="message"
+              message={message}
+              handlePopUp={messageDetailsPopUpHandler}
+            />
           ))}
         </Box>
       </Box>
@@ -164,6 +203,29 @@ function ChatRoom({ chats }) {
           </button>
         </form>
       </Box>
+      {open && (
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography>{popupMessage.createdAt} </Typography>
+            <br />
+            <Typography>Message:</Typography>
+            <Typography>{popupMessage.message}</Typography>
+            <br />
+            <Typography>Read:</Typography>
+            <Typography>{popupMessage.read || "Not read"} </Typography>
+            <br />
+            <Typography>Delivered:</Typography>
+            <Typography>
+              {popupMessage.delivered || "Not delivered"}{" "}
+            </Typography>
+          </Box>
+        </Modal>
+      )}
     </Box>
   );
 }
