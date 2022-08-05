@@ -11,6 +11,7 @@ import ChatHeader from "./ChatHeader";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { KeyboardDoubleArrowDown } from "@mui/icons-material";
+import { useRef } from "react";
 
 const style = {
   position: "absolute",
@@ -29,7 +30,7 @@ const style = {
 function ChatRoom({ chats, scrollToBottom }) {
   const [message, setMessage] = useState("");
   const [formWidth, setFormWidth] = useState("500px");
-  let distanceFromBottom = 0;
+  const [distanceFromBottom, setDistanceFromBottom] = useState(1001);
   const { user } = useAuthContext();
   const { id } = useParams();
   const { socket } = useSocket();
@@ -37,6 +38,7 @@ function ChatRoom({ chats, scrollToBottom }) {
 
   // MESSAGE DETALS POPUP
   const [open, setOpen] = useState(false);
+  const messageContainer = useRef();
   const [popupMessage, setPopupMessage] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -68,29 +70,25 @@ function ChatRoom({ chats, scrollToBottom }) {
 
   recipientId = chat && chat.users._id;
   const setDistance = () => {
-    const element = document.getElementById("messageContainer");
-    const n1 = element.scrollHeight;
-    const n2 = element.scrollTop;
-    const distance = n1 - n2;
-    distanceFromBottom = distance;
-    console.log(distanceFromBottom);
+    const element = messageContainer.current;
+    setDistanceFromBottom(element.scrollHeight - element.scrollTop);
   };
   // set message form width and scroll to bottom of the chatroom
   useEffect(() => {
-    const element = document.getElementById("messageContainer");
     const setMessageFormWidth = () => {
       const width = document.getElementById("messageContainer").clientWidth;
       setFormWidth(`${width}px`);
     };
     setMessageFormWidth();
     scrollToBottom();
+    setDistance();
     window.addEventListener("resize", setMessageFormWidth);
-    element.addEventListener("scroll", setDistance);
+    messageContainer.current.addEventListener("scroll", setDistance);
     return () => {
       window.removeEventListener("resize", setMessageFormWidth);
-      element.removeEventListener("scroll", setDistance);
+      messageContainer.current.removeEventListener("scroll", setDistance);
     };
-  }, []);
+  }, [messageContainer, chat]);
   useEffect(() => {
     if (!chats) return;
     setChat(chats.find((chat) => chat._id === id) || null);
@@ -149,6 +147,7 @@ function ChatRoom({ chats, scrollToBottom }) {
       <Box
         style={{ overflowY: "scroll", paddingBottom: "55px" }}
         id="messageContainer"
+        ref={messageContainer}
       >
         <Box
           sx={{
@@ -213,20 +212,21 @@ function ChatRoom({ chats, scrollToBottom }) {
           </button>
         </form>
       </Box>
-      {/* {distanceFromBottom > 100 && ( */}
-      <IconButton
-        style={{
-          position: "absolute",
-          top: "80%",
-          left: "90%",
-          backgroundColor: "white",
-          border: "2px solid blue",
-        }}
-        onClick={scrollToBottom}
-      >
-        <KeyboardDoubleArrowDown style={{ color: "blue" }} />
-      </IconButton>
-      {/* )} */}
+      {distanceFromBottom > 1000 && (
+        // We will not show scrollToBottom button if user is already at the bottom of the chat
+        <IconButton
+          style={{
+            position: "absolute",
+            top: "80%",
+            left: "90%",
+            backgroundColor: "white",
+            border: "2px solid blue",
+          }}
+          onClick={scrollToBottom}
+        >
+          <KeyboardDoubleArrowDown style={{ color: "blue" }} />
+        </IconButton>
+      )}
 
       {open && (
         <Modal
