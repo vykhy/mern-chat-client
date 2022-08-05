@@ -4,7 +4,7 @@ import ChatRoom from "../components/ChatRoom";
 import { useParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 
-function ChatsContainer({ chats, scrollToBottom }) {
+function ChatsContainer({ chats, scrollToBottom, setCurrentChatId }) {
   let { id } = useParams();
 
   return (
@@ -28,7 +28,11 @@ function ChatsContainer({ chats, scrollToBottom }) {
           }}
         >
           {id ? (
-            <ChatRoom chats={chats} scrollToBottom={scrollToBottom} />
+            <ChatRoom
+              chats={chats}
+              scrollToBottom={scrollToBottom}
+              setCurrentChatId={setCurrentChatId}
+            />
           ) : (
             <h3>Click on a chat to open.</h3>
           )}

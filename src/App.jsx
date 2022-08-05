@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useReducer } from "react";
+import React, { Suspense, useState, lazy, useEffect, useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { useAuthContext } from "./contexts/authContext";
@@ -19,6 +19,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
+  const [currentChatId, setCurrentChatId] = useState(null);
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   const loggedIn = user !== null;
@@ -73,7 +74,7 @@ const App = () => {
       dispatch({ type: "loaded-messages", payload: chats });
     };
     fetchAndSetChats();
-  }, [axiosPrivate, loggedIn, user?.id]);
+  }, [axiosPrivate, loggedIn, user]);
 
   // goes through chats and marks messages received when user was offline as delivered
   useEffect(() => {
@@ -116,6 +117,13 @@ const App = () => {
       socket?.off("marked-as-delivered");
     };
   }, [user, socket]);
+  // function to scroll to the bottom of a chat
+  const scrollToBottom = () => {
+    const element = document.getElementById("messageContainer");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  };
   const handleNewChat = async (data) => {
     const chat = data.chat;
     console.log("new-chat");
@@ -137,10 +145,22 @@ const App = () => {
       addNewChat(chat);
     }
   };
+  const handleScroll = (data) => {
+    const element = document.getElementById("messageContainer");
+    if (element && element.scrollHeight - element.scrollTop < 1500) {
+      if (currentChatId === data.chatId) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      }
+    }
+  };
   const handleNewMessage = (data) => {
     console.log("new-message");
     data.delivered = new Date(Date.now());
     addMessage(data);
+    handleScroll(data);
+
     // emit to mark message as delivered
     data.time = data.delivered;
     socket?.emit("message-delivered", data);
@@ -148,6 +168,7 @@ const App = () => {
   const handleMessageSent = (data) => {
     console.log("message-sent");
     addMessage(data);
+    handleScroll(data);
   };
   const handleMarkedAsRead = (data) => {
     console.log("mark as read");
@@ -162,13 +183,6 @@ const App = () => {
   };
   const addMessage = (data) => {
     dispatch({ type: "new-message", payload: data });
-  };
-  // function to scroll to the bottom of a chat
-  const scrollToBottom = () => {
-    const element = document.getElementById("messageContainer");
-    if (element) {
-      element.scrollTop = element.scrollHeight;
-    }
   };
   return (
     <div>
@@ -185,6 +199,7 @@ const App = () => {
                     <ChatsContainer
                       chats={chats}
                       scrollToBottom={scrollToBottom}
+                      setCurrentChatId={setCurrentChatId}
                     />
                   }
                 />

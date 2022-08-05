@@ -27,10 +27,10 @@ const style = {
   p: 4,
 };
 
-function ChatRoom({ chats, scrollToBottom }) {
+function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
   const [message, setMessage] = useState("");
   const [formWidth, setFormWidth] = useState("500px");
-  const [distanceFromBottom, setDistanceFromBottom] = useState(1001);
+  const [distanceFromBottom, setDistanceFromBottom] = useState();
   const { user } = useAuthContext();
   const { id } = useParams();
   const { socket } = useSocket();
@@ -48,6 +48,7 @@ function ChatRoom({ chats, scrollToBottom }) {
     chats?.find((chat) => chat?._id === id) || null
   );
 
+  setCurrentChatId(chat?._id);
   // UPON OPENING, LOOP BACKWARDS AND MARK MESSAGES AS READ
   // break when last read message found
   useEffect(() => {
@@ -69,8 +70,10 @@ function ChatRoom({ chats, scrollToBottom }) {
   }, [chat, chats, socket, user]);
 
   recipientId = chat && chat.users._id;
+
   const setDistance = () => {
     const element = messageContainer.current;
+    if (!element) return;
     setDistanceFromBottom(element.scrollHeight - element.scrollTop);
   };
   // set message form width and scroll to bottom of the chatroom
@@ -86,7 +89,6 @@ function ChatRoom({ chats, scrollToBottom }) {
     messageContainer.current.addEventListener("scroll", setDistance);
     return () => {
       window.removeEventListener("resize", setMessageFormWidth);
-      messageContainer.current.removeEventListener("scroll", setDistance);
     };
   }, [messageContainer, chat]);
   useEffect(() => {
@@ -145,7 +147,11 @@ function ChatRoom({ chats, scrollToBottom }) {
         />
       )}
       <Box
-        style={{ overflowY: "scroll", paddingBottom: "55px" }}
+        style={{
+          overflowY: "scroll",
+          paddingBottom: "55px",
+          scrollBehaviour: "smooth",
+        }}
         id="messageContainer"
         ref={messageContainer}
       >
@@ -156,6 +162,7 @@ function ChatRoom({ chats, scrollToBottom }) {
             display: "flex",
             flexDirection: "column",
           }}
+          style={{ scrollBehaviour: "smooth" }}
         >
           {chat?.messages?.map((message, idx) => (
             <Message
