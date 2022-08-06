@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -7,6 +7,7 @@ import Chat from "./Chat";
 import { Divider } from "@mui/material";
 
 function Chats({ chats }) {
+  const [unopenedChats, setUnopenedChats] = useState(0);
   return (
     <Box
       sx={{

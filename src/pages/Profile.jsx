@@ -30,7 +30,7 @@ function Profile({ chats }) {
     // fetches details of a user by taking the user's id
     const fetchUser = async (id) => {
       const response = await axiosPrivate.get(
-        process.env.REACT_APP_DEV_SERVER_URL`/users/${id}`
+        process.env.REACT_APP_DEV_SERVER_URL + `/users/${id}`
       );
       const userDetails = response.data;
       setProfileUser(userDetails);
