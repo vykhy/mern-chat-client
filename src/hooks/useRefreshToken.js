@@ -11,9 +11,12 @@ const useRefreshToken = () => {
    */
   const refresh = async () => {
     try {
-      const response = await axios.get("/auth/refresh", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_DEV_SERVER_URL + "/auth/refresh",
+        {
+          withCredentials: true,
+        }
+      );
       // update access token in context and local storage
       updateTokens(response.data.accessToken);
       return response.data.accessToken;

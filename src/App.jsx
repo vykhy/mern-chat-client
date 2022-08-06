@@ -20,6 +20,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
   const [currentChatId, setCurrentChatId] = useState(null);
+  const [chatWithNewCount, setChatWithNewCount] = useState(0);
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   const loggedIn = user !== null;
@@ -38,7 +39,9 @@ const App = () => {
     // logged out.
     const verifyTokenFoundInStorage = async () => {
       try {
-        const result = await axiosPrivate.get("/auth/verify");
+        const result = await axiosPrivate.get(
+          process.env.REACT_APP_DEV_SERVER_URL + "/auth/verify"
+        );
       } catch (err) {
         removeToken();
         removeUser();
@@ -52,10 +55,14 @@ const App = () => {
     if (!loggedIn) return;
     const fetchAndSetChats = async () => {
       // fetch chats
-      const response = await axiosPrivate.get("/chats");
+      const response = await axiosPrivate.get(
+        process.env.REACT_APP_DEV_SERVER_URL + "/chats"
+      );
       const chats = response.data.chats;
       // fetch contacts
-      const contactResponse = await axiosPrivate.get("/contacts");
+      const contactResponse = await axiosPrivate.get(
+        process.env.REACT_APP_DEV_SERVER_URL + "/contacts"
+      );
       const contacts = contactResponse.data.contacts;
       // map chat to contacts
       chats.forEach((chat) => {
@@ -82,8 +89,8 @@ const App = () => {
     chats.forEach((chat) => {
       for (let i = chat.messages.length - 1; i >= 0; i--) {
         if (
-          chat.messages[i].delivered === null &&
-          chat.messages[i].authorId !== user.id
+          chat.messages[i].delivered === null && //message not marked as delivered
+          chat.messages[i].authorId !== user.id //message was not sent by self
         ) {
           const now = new Date(Date.now());
           chat.messages[i].delivered = now;
@@ -91,8 +98,8 @@ const App = () => {
           socket.emit("message-delivered", chat.messages[i]);
           chat.messages[i].time = null;
         } else if (
-          chat.messages[i].delivered &&
-          chat.messages[i].authorId !== user.id
+          chat.messages[i].delivered && //if message marked as delivered
+          chat.messages[i].authorId !== user.id //and message not sent by self
         ) {
           break;
         }
@@ -151,7 +158,7 @@ const App = () => {
       if (currentChatId === data.chatId) {
         setTimeout(() => {
           scrollToBottom();
-        }, 100);
+        }, 200);
       }
     }
   };
@@ -190,7 +197,7 @@ const App = () => {
         <Suspense fallback={"Loading"}>
           {loggedIn ? (
             <>
-              <Header />
+              <Header chatWithNewCount={chatWithNewCount} />
               <Routes>
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route

@@ -12,7 +12,9 @@ const Contacts = ({ chats, dispatch }) => {
 
   useEffect(() => {
     const fetchContacts = async () => {
-      const response = await axiosPrivate.get("/contacts");
+      const response = await axiosPrivate.get(
+        process.env.REACT_APP_DEV_SERVER_URL + "/contacts"
+      );
       setContacts(response.data.contacts);
     };
     fetchContacts();

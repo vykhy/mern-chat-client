@@ -78,7 +78,8 @@ const Login = () => {
 
     // post to server
     try {
-      const result = await axios.post("/auth/login", {
+      const url = process.env.REACT_APP_DEV_SERVER_URL + "/auth/login";
+      const result = await axios.post(url, {
         email,
         password,
       });
@@ -89,12 +90,13 @@ const Login = () => {
         return;
       }
       // update context with user data
-      const { userId, userName, thumbnail, profilePicture, accessToken } = resData;
+      const { userId, userName, thumbnail, profilePicture, accessToken } =
+        resData;
       setNewUser({
         id: userId,
         name: userName,
         thumbnail,
-        profilePicture
+        profilePicture,
       });
       updateTokens(accessToken);
     } catch (err) {

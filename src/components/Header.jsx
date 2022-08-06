@@ -14,7 +14,7 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Logout from "@mui/icons-material/Logout";
 
-export default function Header() {
+export default function Header({ chatWithNewCount }) {
   const { user, removeToken, removeUser } = useAuthContext();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -56,7 +56,9 @@ export default function Header() {
             color: "black",
           }}
         >
-          <Typography sx={{ minWidth: 100 }}>Chats</Typography>
+          <Typography sx={{ minWidth: 100 }}>
+            Chats {chatWithNewCount > 0 && chatWithNewCount}{" "}
+          </Typography>
         </Link>
         <Link
           to="/contacts"

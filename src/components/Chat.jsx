@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   ListItemText,
@@ -7,8 +7,29 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
+import { useAuthContext } from "../contexts/authContext";
 
-function Chat({ chat }) {
+function Chat({ chats, chat }) {
+  const [unreadCount, setUnreadCount] = useState();
+  const { user } = useAuthContext();
+  useEffect(() => {
+    let unread = 0;
+    for (let i = chat.messages.length - 1; i >= 0; i--) {
+      if (
+        chat.messages[i].read === null &&
+        chat.messages[i].authorId !== user.id
+      ) {
+        unread += 1;
+      } else if (
+        chat.messages[i].read &&
+        chat.messages[i].authorId === user.id
+      ) {
+        break;
+      }
+    }
+    setUnreadCount(unread);
+  }, [chats]);
+
   return (
     <MenuItem style={{ borderBottom: "1px solid gray" }}>
       <Grid container>
@@ -38,19 +59,21 @@ function Chat({ chat }) {
             padding: "5px",
           }}
         >
-          <Typography
-            cursor={"pointer"}
-            style={{
-              borderRadius: "50%",
-              backgroundColor: "blue",
-              color: "white",
-              padding: "5px",
-              minWidth: "15px",
-            }}
-            sx={{ textAlign: "center", fontSize: 10 }}
-          >
-            1
-          </Typography>
+          {unreadCount > 0 && (
+            <Typography
+              cursor={"pointer"}
+              style={{
+                borderRadius: "50%",
+                backgroundColor: "blue",
+                color: "white",
+                padding: "5px",
+                minWidth: "25px",
+              }}
+              sx={{ textAlign: "center", fontSize: 10 }}
+            >
+              {unreadCount}
+            </Typography>
+          )}
         </Grid>
       </Grid>
     </MenuItem>

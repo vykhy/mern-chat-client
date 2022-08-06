@@ -48,7 +48,6 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
     chats?.find((chat) => chat?._id === id) || null
   );
 
-  setCurrentChatId(chat?._id);
   // UPON OPENING, LOOP BACKWARDS AND MARK MESSAGES AS READ
   // break when last read message found
   useEffect(() => {
@@ -67,6 +66,7 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
         break;
       }
     }
+    setCurrentChatId(chat?._id);
   }, [chat, chats, socket, user]);
 
   recipientId = chat && chat.users._id;

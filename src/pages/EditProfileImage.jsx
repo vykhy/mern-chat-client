@@ -50,7 +50,7 @@ function EditProfileImage({ img }) {
     formData.append("image", newImage);
     try {
       const response = await axiosPrivate.post(
-        "/users/profile-image",
+        process.env.REACT_APP_DEV_SERVER_URL + "/users/profile-image",
         formData
       );
       setNewUser(response.data);
@@ -73,7 +73,9 @@ function EditProfileImage({ img }) {
   };
   const removeProfilePicture = async () => {
     try {
-      const response = await axiosPrivate.delete("/users/profile-image");
+      const response = await axiosPrivate.delete(
+        process.env.REACT_APP_DEV_SERVER_URL + "/users/profile-image"
+      );
       const removed = response.data.removed;
       if (removed) {
         setNewUser({

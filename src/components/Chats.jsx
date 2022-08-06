@@ -24,7 +24,7 @@ function Chats({ chats }) {
               style={{ textDecoration: "none" }}
               key={idx}
             >
-              <Chat chat={chat} />
+              <Chat chat={chat} chats={chats} />
               {/* <Divider sx={{ m: 0 }} /> */}
             </Link>
           ))}

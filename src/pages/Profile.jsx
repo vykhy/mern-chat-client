@@ -29,7 +29,9 @@ function Profile({ chats }) {
   useEffect(() => {
     // fetches details of a user by taking the user's id
     const fetchUser = async (id) => {
-      const response = await axiosPrivate.get(`/users/${id}`);
+      const response = await axiosPrivate.get(
+        process.env.REACT_APP_DEV_SERVER_URL`/users/${id}`
+      );
       const userDetails = response.data;
       setProfileUser(userDetails);
     };

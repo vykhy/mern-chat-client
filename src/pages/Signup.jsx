@@ -83,13 +83,16 @@ const Signup = () => {
     if (ruleBroken) return;
 
     try {
-      const result = await axios.post("/auth/signup", {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-      });
+      const result = await axios.post(
+        process.env.REACT_APP_DEV_SERVER_URL + "/auth/signup",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+        }
+      );
       const resData = result.data;
       if (resData.error) {
         setError(resData.error);

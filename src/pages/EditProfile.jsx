@@ -45,7 +45,9 @@ const EditProfile = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const response = await axiosPrivate.get(`/users/${user.id}`);
+      const response = await axiosPrivate.get(
+        process.env.REACT_APP_DEV_SERVER_URL + `/users/${user.id}`
+      );
       const details = response.data;
       setFirstName(details.firstName);
       setLastName(details.lastName);
@@ -95,11 +97,14 @@ const EditProfile = () => {
     if (ruleBroken) return;
     // post to server
     try {
-      const result = await axiosPrivate.put("/users/profile", {
-        firstName,
-        lastName,
-        about,
-      });
+      const result = await axiosPrivate.put(
+        process.env.REACT_APP_DEV_SERVER_URL + "/users/profile",
+        {
+          firstName,
+          lastName,
+          about,
+        }
+      );
       const resData = result.data;
       // show error if custom error field found
       if (resData.error) {

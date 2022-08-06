@@ -10,7 +10,7 @@ function SocketContextProvider({ children }) {
 
   useEffect(() => {
     if (user === null) return;
-    const newSocket = socketio.connect(process.env.SOCKET_URL, {
+    const newSocket = socketio.connect(process.env.REACT_APP_SOCKET_URL, {
       query: {
         userId: user.id,
       },
