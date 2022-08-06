@@ -14,7 +14,7 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Logout from "@mui/icons-material/Logout";
 
-export default function Header({ chatWithNewCount }) {
+export default function Header({ unopenedChats }) {
   const { user, removeToken, removeUser } = useAuthContext();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -33,6 +33,7 @@ export default function Header({ chatWithNewCount }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <React.Fragment>
       <Box
@@ -54,11 +55,26 @@ export default function Header({ chatWithNewCount }) {
           style={{
             textDecoration: "none",
             color: "black",
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
-          <Typography sx={{ minWidth: 100 }}>
-            Chats {chatWithNewCount > 0 && chatWithNewCount}{" "}
-          </Typography>
+          <Typography sx={{ minWidth: 100 }}>Chats </Typography>
+          {unopenedChats > 0 && (
+            <Typography
+              cursor={"pointer"}
+              style={{
+                borderRadius: "50%",
+                backgroundColor: "blue",
+                color: "white",
+                padding: "5px",
+                minWidth: "25px",
+              }}
+              sx={{ textAlign: "center", fontSize: 10 }}
+            >
+              {unopenedChats}
+            </Typography>
+          )}
         </Link>
         <Link
           to="/contacts"

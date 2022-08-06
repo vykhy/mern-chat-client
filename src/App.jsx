@@ -20,7 +20,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
   const [currentChatId, setCurrentChatId] = useState(null);
-  const [chatWithNewCount, setChatWithNewCount] = useState(0);
+  const [unopenedChats, setUnopenedChats] = useState(0);
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   const loggedIn = user !== null;
@@ -86,8 +86,18 @@ const App = () => {
   // goes through chats and marks messages received when user was offline as delivered
   useEffect(() => {
     if (!socket) return;
+    setUnopenedChats(0); // reset unopened chats whenever we loop and calculate again
     chats.forEach((chat) => {
       for (let i = chat.messages.length - 1; i >= 0; i--) {
+        // if the last message in the chat is unread and was not created by this user
+        // then we increase the count of unponed chats
+        if (
+          chat.messages[i].read === null &&
+          i === chat.messages.length - 1 &&
+          chat.messages[i].authorId !== user.id
+        ) {
+          setUnopenedChats((prev) => prev + 1);
+        }
         if (
           chat.messages[i].delivered === null && //message not marked as delivered
           chat.messages[i].authorId !== user.id //message was not sent by self
@@ -197,7 +207,7 @@ const App = () => {
         <Suspense fallback={"Loading"}>
           {loggedIn ? (
             <>
-              <Header chatWithNewCount={chatWithNewCount} />
+              <Header unopenedChats={unopenedChats} />
               <Routes>
                 <Route path="/" element={<Home chats={chats} />} />
                 <Route

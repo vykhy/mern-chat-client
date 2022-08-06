@@ -10,11 +10,12 @@ import {
 import { useAuthContext } from "../contexts/authContext";
 
 function Chat({ chats, chat }) {
-  const [unreadCount, setUnreadCount] = useState();
+  const [unreadCount, setUnreadCount] = useState(0); // count of unread messages
   const { user } = useAuthContext();
   useEffect(() => {
     let unread = 0;
     for (let i = chat.messages.length - 1; i >= 0; i--) {
+      // increase unread message count for every unread message not created by this user
       if (
         chat.messages[i].read === null &&
         chat.messages[i].authorId !== user.id
