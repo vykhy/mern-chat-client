@@ -3,13 +3,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useAuthContext } from "../contexts/authContext";
 
-function Message({ message, handlePopUp }) {
+const Message = ({ message, handlePopUp }) => {
   const {
     user: { id },
   } = useAuthContext();
   const backGroundColor = id === message.authorId ? "blue" : "gray";
   const color = id === message.authorId ? "white" : "black";
   const alignSelf = id === message.authorId ? "end" : "start";
+
   return (
     <Box
       style={{
@@ -20,6 +21,7 @@ function Message({ message, handlePopUp }) {
         maxWidth: "80%",
         backgroundColor: backGroundColor,
         color: color,
+
         alignSelf: alignSelf,
       }}
       onClick={(e) => handlePopUp(e, message)}
@@ -34,19 +36,21 @@ function Message({ message, handlePopUp }) {
           </Typography> */}
         <Typography variant="body2">{message.message}</Typography>
         <br />
-        <Typography sx={{ mt: 1.5 }} color="text.secondary">
-          {message.read
-            ? "Read"
-            : !message.read && message.delivered
-            ? "Delivered"
-            : "Sent"}
-        </Typography>
+        {id === message.authorId && (
+          <Typography sx={{ mt: 1.5 }} color="text.secondary">
+            {message.read
+              ? "Read"
+              : !message.read && message.delivered
+              ? "Delivered"
+              : "Sent"}
+          </Typography>
+        )}
       </CardContent>
       {/* <CardActions>
           <Button size="small">Learn More</Button>
         </CardActions> */}
     </Box>
   );
-}
+};
 
 export default Message;

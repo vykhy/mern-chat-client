@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { IconButton, TextField } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
@@ -10,8 +8,9 @@ import Message from "./Message";
 import ChatHeader from "./ChatHeader";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { KeyboardDoubleArrowDown } from "@mui/icons-material";
 import { useRef } from "react";
+import ScrollButton from "./ScrollButton";
+import MessageForm from "./MessageForm";
 
 const style = {
   position: "absolute",
@@ -27,14 +26,11 @@ const style = {
   p: 4,
 };
 
-function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
-  const [message, setMessage] = useState("");
+const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
   const [formWidth, setFormWidth] = useState("500px");
-  const [distanceFromBottom, setDistanceFromBottom] = useState();
   const { user } = useAuthContext();
   const { id } = useParams();
   const { socket } = useSocket();
-  let recipientId;
 
   // MESSAGE DETALS POPUP
   const [open, setOpen] = useState(false);
@@ -69,13 +65,6 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
     setCurrentChatId(chat?._id);
   }, [chat, chats, socket, user]);
 
-  recipientId = chat && chat.users._id;
-
-  const setDistance = () => {
-    const element = messageContainer.current;
-    if (!element) return;
-    setDistanceFromBottom(element.scrollHeight - element.scrollTop);
-  };
   // set message form width and scroll to bottom of the chatroom
   useEffect(() => {
     const setMessageFormWidth = () => {
@@ -84,9 +73,8 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
     };
     setMessageFormWidth();
     scrollToBottom();
-    setDistance();
+    //setDistance();
     window.addEventListener("resize", setMessageFormWidth);
-    messageContainer.current.addEventListener("scroll", setDistance);
     return () => {
       window.removeEventListener("resize", setMessageFormWidth);
     };
@@ -96,30 +84,9 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
     setChat(chats.find((chat) => chat._id === id) || null);
   }, [id, chats]);
 
-  let newChat;
   // id of current user
   const currentUserId = user.id;
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (message === "") return;
-    newChat = chat.messages.length === 0;
-    // get the chat id from chat prop
-    let chatId = chat?._id || null;
-    // send to chat id
-    // if it is a new chat, we will send new chat property as true
-    // thus the server will send the chat details along with message to the recipient
-
-    // emit socket and send message with user's id
-    socket?.emit("send-message", {
-      chatId,
-      recipientId,
-      authorId: currentUserId,
-      message,
-      newChat,
-    });
-    setMessage("");
-  };
   const messageDetailsPopUpHandler = (e, message) => {
     if (!message) return;
     if (message.authorId === currentUserId) {
@@ -127,6 +94,7 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
       handleOpen();
     }
   };
+
   return (
     <Box
       sx={{
@@ -164,9 +132,9 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
           }}
           style={{ scrollBehaviour: "smooth" }}
         >
-          {chat?.messages?.map((message, idx) => (
+          {chat?.messages.slice(-50).map((message, index) => (
             <Message
-              key={idx}
+              key={index}
               className="message"
               message={message}
               handlePopUp={messageDetailsPopUpHandler}
@@ -183,57 +151,12 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
           backgroundColor: "white",
         }}
       >
-        <form
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "space-between",
-          }}
-          onSubmit={handleSendMessage}
-        >
-          <TextField
-            id="outlined-basic"
-            label="Type your message..."
-            variant="outlined"
-            sx={{
-              padding: "0px",
-            }}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            fullWidth
-          />
-
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "blue",
-              borderRadius: "50%",
-              border: "none",
-              cursor: "pointer",
-              width: "55px",
-              marginLeft: "3px",
-            }}
-            disabled={message === ""}
-          >
-            <SendIcon color="action" />
-          </button>
-        </form>
+        <MessageForm chat={chat} currentUserId={currentUserId} />
       </Box>
-      {distanceFromBottom > 1000 && (
-        // We will not show scrollToBottom button if user is already at the bottom of the chat
-        <IconButton
-          style={{
-            position: "absolute",
-            top: "80%",
-            left: "90%",
-            backgroundColor: "white",
-            border: "2px solid blue",
-          }}
-          onClick={scrollToBottom}
-        >
-          <KeyboardDoubleArrowDown style={{ color: "blue" }} />
-        </IconButton>
-      )}
+      <ScrollButton
+        messageContainer={messageContainer}
+        scrollToBottom={scrollToBottom}
+      />
 
       {open && (
         <Modal
@@ -260,6 +183,6 @@ function ChatRoom({ chats, scrollToBottom, setCurrentChatId }) {
       )}
     </Box>
   );
-}
+};
 
 export default ChatRoom;

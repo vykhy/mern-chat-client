@@ -19,7 +19,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
-  const [currentChatId, setCurrentChatId] = useState(null);
+  const [currentChatId, setCurrentChatId] = useState();
   const [unopenedChats, setUnopenedChats] = useState(0);
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
@@ -84,6 +84,7 @@ const App = () => {
   }, [axiosPrivate, loggedIn, user]);
 
   // goes through chats and marks messages received when user was offline as delivered
+  // counts unopened chats
   useEffect(() => {
     if (!socket) return;
     setUnopenedChats(0); // reset unopened chats whenever we loop and calculate again

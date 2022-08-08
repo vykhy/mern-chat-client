@@ -71,19 +71,6 @@ const chatReducer = (state, action) => {
       // changing chat in place did not trigger re-render so I have returned it this way
       return [chat, ...state];
     }
-    case "set-unread-count": {
-      let chat, index;
-      for (let i = 0; i <= state.length; i++) {
-        if (state[i]._id === action.payload.chatId) {
-          chat = state[i];
-          index = i;
-          break;
-        }
-      }
-      chat.unreadCount = action.payload.unreadCount;
-      state.splice(index, 1);
-      return [chat, ...state];
-    }
     default:
       return state;
   }
