@@ -45,32 +45,36 @@ export default function Header({ unopenedChats }) {
           textAlign: "center",
         }}
         style={{
+          padding: "8px",
           zIndex: 5,
-          backgroundColor: "white",
-          boxShadow: "-1px 47px 78px -50px rgba(0,0,0,0.72)",
+          backgroundColor: "#1674ea",
+          boxShadow: "0px 11px 12px -12px rgba(102,102,102,1)",
         }}
       >
         <Link
           to="/"
           style={{
             textDecoration: "none",
-            color: "black",
+            color: "#fff",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
-          <Typography sx={{ minWidth: 100 }}>Chats </Typography>
+          <Typography variant={"h6"} sx={{ minWidth: 100 }}>
+            Chats{" "}
+          </Typography>
           {unopenedChats > 0 && (
             <Typography
               cursor={"pointer"}
               style={{
                 borderRadius: "50%",
-                backgroundColor: "blue",
-                color: "white",
+                backgroundColor: "#fff",
+                color: "blue",
+                fontWeight: "bolder",
                 padding: "5px",
-                minWidth: "25px",
+                minWidth: "35px",
               }}
-              sx={{ textAlign: "center", fontSize: 10 }}
+              sx={{ textAlign: "center", fontSize: 16 }}
             >
               {unopenedChats}
             </Typography>
@@ -80,10 +84,12 @@ export default function Header({ unopenedChats }) {
           to="/contacts"
           style={{
             textDecoration: "none",
-            color: "black",
+            color: "#fff",
           }}
         >
-          <Typography sx={{ minWidth: 100 }}>Contacts</Typography>
+          <Typography variant={"h6"} sx={{ minWidth: 100 }}>
+            Contacts
+          </Typography>
         </Link>
         <Tooltip title="Account settings">
           <IconButton

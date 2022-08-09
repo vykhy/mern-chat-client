@@ -46,6 +46,7 @@ function MessageForm({ chat, currentUserId }) {
         sx={{
           padding: "0px",
         }}
+        style={{ background: "white", opacity: "1" }}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         fullWidth
@@ -54,16 +55,25 @@ function MessageForm({ chat, currentUserId }) {
       <button
         type="submit"
         style={{
-          backgroundColor: "blue",
+          backgroundColor: "#1674ea",
           borderRadius: "50%",
           border: "none",
           cursor: "pointer",
           width: "55px",
           marginLeft: "3px",
+          position: "relative",
         }}
         disabled={message === ""}
       >
-        <SendIcon color="action" />
+        <SendIcon
+          style={{
+            color: "white",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translateX(-40%) translateY(-50%)",
+          }}
+        />
       </button>
     </form>
   );

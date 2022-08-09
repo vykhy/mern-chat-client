@@ -1,6 +1,7 @@
 import React, { Suspense, useState, lazy, useEffect, useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import { Box } from "@mui/system";
 import { useAuthContext } from "./contexts/authContext";
 import { useSocket } from "./contexts/socketContext";
 import useAxiosPrivate from "./hooks/useAxiosPrivate";
@@ -23,10 +24,13 @@ const App = () => {
   const [unopenedChats, setUnopenedChats] = useState(0);
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
-  const loggedIn = user !== null;
+  const [loggedIn, setLoggedIn] = useState(user !== null);
 
   const [chats, dispatch] = useReducer(chatReducer, []);
 
+  useEffect(() => {
+    setLoggedIn(user !== null);
+  }, [user]);
   // verify token found in localStorage upon loading
   useEffect(() => {
     if (!accessToken) return;

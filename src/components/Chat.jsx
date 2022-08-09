@@ -32,7 +32,7 @@ function Chat({ chats, chat }) {
   }, [chats]);
 
   return (
-    <MenuItem style={{ borderBottom: "1px solid gray" }}>
+    <MenuItem divider>
       <Grid container>
         <Grid item xs={3}>
           <ListItemAvatar>

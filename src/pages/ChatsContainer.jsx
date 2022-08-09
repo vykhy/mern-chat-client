@@ -9,12 +9,18 @@ function ChatsContainer({ chats, scrollToBottom, setCurrentChatId }) {
 
   return (
     <>
-      <Grid container style={{ height: "95%" }}>
+      <Grid
+        container
+        style={{
+          height: "92%",
+          //overflow: "hidden",
+        }}
+      >
         <Grid
           item
           sx={{ display: { xs: "none", sm: "block" } }}
           sm={3}
-          style={{ height: "95%", overflowY: "scroll" }}
+          style={{ height: "100%", overflowY: "scroll" }}
         >
           <Chats chats={chats}></Chats>
         </Grid>
@@ -23,8 +29,7 @@ function ChatsContainer({ chats, scrollToBottom, setCurrentChatId }) {
           xs={12}
           sm={9}
           style={{
-            height: "95%",
-            // overflowY: "scroll",
+            height: "100%",
           }}
         >
           {id ? (

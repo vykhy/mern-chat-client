@@ -97,7 +97,7 @@ function EditProfileImage({ img }) {
       container
       display={"flex"}
       justifyContent={"center"}
-      style={{ backgroundColor: "rgb(230,230,230)" }}
+      style={{ backgroundColor: "#f0f0f0" }}
     >
       <Grid item xs={12} md={8} lg={6} style={{ backgroundColor: "white" }}>
         {success && (
@@ -118,7 +118,7 @@ function EditProfileImage({ img }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "gray",
+            backgroundColor: "#a0a0a0",
             borderRadius: "10px",
             maxWidth: "100%",
             height: "500px",
@@ -138,11 +138,11 @@ function EditProfileImage({ img }) {
           <form encType="multipart">
             <ListItem>
               <Avatar
-                style={{ marginRight: "5px", backgroundColor: "#1769aa" }}
+                style={{ marginRight: "5px", backgroundColor: "#1674ea" }}
               >
                 <AddPhotoAlternate />
               </Avatar>
-              <Button variant="contained" component="label" color="primary">
+              <Button variant="contained" component="label">
                 {" "}
                 Select new image
                 <input type="file" hidden onChange={handleFileSelect} />
@@ -155,7 +155,7 @@ function EditProfileImage({ img }) {
             {newImage && (
               <ListItem>
                 <Avatar
-                  style={{ marginRight: "5px", backgroundColor: "#1769aa" }}
+                  style={{ marginRight: "5px", backgroundColor: "#1674ea" }}
                 >
                   <FileUpload />
                 </Avatar>

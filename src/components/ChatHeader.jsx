@@ -15,7 +15,15 @@ function ChatHeader({ img, name, lastSeen, id }) {
   };
   return (
     <>
-      <MenuList onClick={goToUserProfile} style={{ cursor: "pointer" }}>
+      <MenuList
+        onClick={goToUserProfile}
+        style={{
+          cursor: "pointer",
+          paddingBottom: "0",
+          marginTop: "0px",
+          boxShadow: "0px 11px 12px -12px rgba(102,102,102,0.8)",
+        }}
+      >
         <MenuItem>
           <ListItemAvatar>
             <Avatar src={img ? img : "/images/default-user.png"}></Avatar>

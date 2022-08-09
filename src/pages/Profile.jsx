@@ -58,7 +58,7 @@ function Profile({ chats }) {
       container
       display={"flex"}
       justifyContent={"center"}
-      style={{ backgroundColor: "rgb(230,230,230)" }}
+      style={{ backgroundColor: "#f0f0f0" }}
     >
       <Grid item xs={12} md={8} lg={6} style={{ backgroundColor: "white" }}>
         {/* boxShadow: "0px 0px 103px -29px rgba(0,0,0,0.72)", */}
@@ -71,7 +71,7 @@ function Profile({ chats }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "gray",
+            backgroundColor: "#a0a0a0",
             borderRadius: "10px",
           }}
         >
@@ -95,8 +95,11 @@ function Profile({ chats }) {
             <Link to="/profile/image">
               <MenuList style={{ padding: "0px" }} fullWidth>
                 <MenuItem fullWidth style={{ height: "40px" }}>
-                  <ListItemText primary="Edit Profile Picture" />
-                  <ArrowForwardIos />
+                  <ListItemText
+                    style={{ color: "#1662da", fontWeight: "bolder" }}
+                    primary="Edit Profile Picture"
+                  />
+                  <ArrowForwardIos style={{ color: "#1674ea" }} />
                 </MenuItem>
                 <Divider component="li" />
               </MenuList>

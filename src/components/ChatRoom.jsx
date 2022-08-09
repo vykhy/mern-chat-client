@@ -117,8 +117,10 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
       <Box
         style={{
           overflowY: "scroll",
-          paddingBottom: "55px",
           scrollBehaviour: "smooth",
+          paddingLeft: "5px",
+          flexGrow: 1,
+          backgroundColor: "#f0f0f0",
         }}
         id="messageContainer"
         ref={messageContainer}
@@ -126,7 +128,6 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
         <Box
           sx={{
             width: "100%",
-            flexGrow: 1,
             display: "flex",
             flexDirection: "column",
           }}
@@ -144,11 +145,8 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
       </Box>
       <Box
         style={{
-          position: "absolute",
-          top: "100%",
           width: formWidth,
-          transform: "translateY(-100%)",
-          backgroundColor: "white",
+          backgroundColor: "#1674ea",
         }}
       >
         <MessageForm chat={chat} currentUserId={currentUserId} />

@@ -23,11 +23,11 @@ function ScrollButton({ messageContainer, scrollToBottom }) {
           top: "80%",
           left: "80%",
           backgroundColor: "white",
-          border: "2px solid blue",
+          border: "2px solid #1674ea",
         }}
         onClick={scrollToBottom}
       >
-        <KeyboardDoubleArrowDown style={{ color: "blue" }} />
+        <KeyboardDoubleArrowDown style={{ color: "#1674ea" }} />
       </IconButton>
     )
   );
