@@ -10,6 +10,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Loading from "../components/Loading";
 import axios from "axios";
 
 function Copyright(props) {
@@ -22,7 +23,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        MERN Chat
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -34,6 +35,8 @@ const theme = createTheme();
 
 const Signup = () => {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const [message, setMessage] = useState("User created");
 
   const handleSubmit = async (event) => {
@@ -82,6 +85,8 @@ const Signup = () => {
     });
     if (ruleBroken) return;
 
+    setLoadingText("Signing up...");
+    setIsLoading(true);
     try {
       const result = await axios.post(
         process.env.REACT_APP_DEV_SERVER_URL + "/auth/signup",
@@ -101,6 +106,9 @@ const Signup = () => {
       setMessage(resData.message);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoadingText("");
+      setIsLoading(true);
     }
   };
 
@@ -222,6 +230,7 @@ const Signup = () => {
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
+        {isLoading && <Loading text={loadingText} />}
       </Container>
     </ThemeProvider>
   );

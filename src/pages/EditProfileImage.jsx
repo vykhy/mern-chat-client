@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { AddPhotoAlternate, Delete, FileUpload } from "@mui/icons-material";
+import {
+  AddPhotoAlternate,
+  Delete,
+  FileUpload,
+  TrendingUpOutlined,
+} from "@mui/icons-material";
 import {
   Avatar,
   List,
@@ -17,6 +22,7 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { useAuthContext } from "../contexts/authContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Loading from "../components/Loading";
 
 const style = {
   position: "absolute",
@@ -36,6 +42,8 @@ function EditProfileImage({ img }) {
   const [newImage, setNewImage] = useState(null);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const axiosPrivate = useAxiosPrivate();
   const { user, setNewUser } = useAuthContext();
 
@@ -49,6 +57,8 @@ function EditProfileImage({ img }) {
     const formData = new FormData();
     formData.append("image", newImage);
     try {
+      setLoadingText("Uploading image...");
+      setIsLoading(true);
       const response = await axiosPrivate.post(
         process.env.REACT_APP_DEV_SERVER_URL + "/users/profile-image",
         formData
@@ -59,6 +69,9 @@ function EditProfileImage({ img }) {
     } catch (error) {
       console.log(error);
       setError(true);
+    } finally {
+      setLoadingText("");
+      setIsLoading(false);
     }
   };
   const handleFileSelect = (e) => {
@@ -73,6 +86,9 @@ function EditProfileImage({ img }) {
   };
   const removeProfilePicture = async () => {
     try {
+      handleClose(); //close remove image popup modal
+      setLoadingText("Removing your image...");
+      setIsLoading(true);
       const response = await axiosPrivate.delete(
         process.env.REACT_APP_DEV_SERVER_URL + "/users/profile-image"
       );
@@ -90,6 +106,9 @@ function EditProfileImage({ img }) {
       }
     } catch (err) {
       setError("There was an error");
+    } finally {
+      setLoadingText("");
+      setIsLoading(false);
     }
   };
   return (
@@ -215,6 +234,7 @@ function EditProfileImage({ img }) {
           </Box>
         </Fade>
       </Modal>
+      {isLoading && <Loading text={loadingText} />}
     </Grid>
   );
 }

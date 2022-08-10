@@ -12,6 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Loading from "../components/Loading";
 
 import { useAuthContext } from "../contexts/authContext";
 function Copyright(props) {
@@ -36,6 +37,8 @@ const theme = createTheme();
 
 const Login = () => {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const { user, setNewUser, updateTokens } = useAuthContext();
 
   const handleSubmit = async (event) => {
@@ -77,6 +80,8 @@ const Login = () => {
     if (ruleBroken) return;
 
     // post to server
+    setLoadingText("Loggin in...");
+    setIsLoading(true);
     try {
       const url = process.env.REACT_APP_DEV_SERVER_URL + "/auth/login";
       const result = await axios.post(url, {
@@ -102,6 +107,9 @@ const Login = () => {
     } catch (err) {
       console.log(err.message);
       setError(err.message);
+    } finally {
+      setLoadingText("");
+      setIsLoading(false);
     }
   };
 
@@ -180,6 +188,7 @@ const Login = () => {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        {isLoading && <Loading text={loadingText} />}
       </Container>
     </ThemeProvider>
   );

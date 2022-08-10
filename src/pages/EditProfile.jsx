@@ -11,9 +11,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { AccountBox } from "@mui/icons-material";
 
 import { useAuthContext } from "../contexts/authContext";
-import { AccountBox } from "@mui/icons-material";
+import Loading from "../components/Loading";
 function Copyright(props) {
   return (
     <Typography
@@ -40,6 +41,8 @@ const EditProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [about, setAbout] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const { user, setNewUser } = useAuthContext();
   const axiosPrivate = useAxiosPrivate();
 
@@ -97,6 +100,8 @@ const EditProfile = () => {
     if (ruleBroken) return;
     // post to server
     try {
+      setIsLoading(true);
+      setLoadingText("Updating Profile...");
       const result = await axiosPrivate.put(
         process.env.REACT_APP_DEV_SERVER_URL + "/users/profile",
         {
@@ -125,6 +130,9 @@ const EditProfile = () => {
     } catch (err) {
       console.log(err.message);
       setError("There was an error");
+    } finally {
+      setLoadingText("");
+      setIsLoading(false);
     }
   };
 
@@ -212,6 +220,7 @@ const EditProfile = () => {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        {isLoading && <Loading text={loadingText} />}
       </Container>
     </ThemeProvider>
   );

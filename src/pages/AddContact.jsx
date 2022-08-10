@@ -12,6 +12,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+import Loading from "../components/Loading";
+
 function Copyright(props) {
   return (
     <Typography
@@ -35,6 +37,8 @@ const theme = createTheme();
 const AddContact = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const axiosPrivate = useAxiosPrivate();
 
   const handleSubmit = async (event) => {
@@ -73,6 +77,8 @@ const AddContact = () => {
 
     // post to server
     try {
+      setIsLoading(true);
+      setLoadingText("Adding Contact...");
       const result = await axiosPrivate.post("/contacts/add", {
         name,
         email,
@@ -88,6 +94,8 @@ const AddContact = () => {
     } catch (err) {
       // console.log(err.message);
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -161,6 +169,7 @@ const AddContact = () => {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        {isLoading && <Loading text={loadingText} />}
       </Container>
     </ThemeProvider>
   );

@@ -6,9 +6,12 @@ import Grid from "@mui/material/Grid";
 import MenuList from "@mui/material/MenuList";
 import { Typography } from "@mui/material";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Loading from "../components/Loading";
 
 const Contacts = ({ chats, dispatch }) => {
   const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const axiosPrivate = useAxiosPrivate();
 
   const navigate = useNavigate();
@@ -18,10 +21,14 @@ const Contacts = ({ chats, dispatch }) => {
 
   useEffect(() => {
     const fetchContacts = async () => {
+      setIsLoading(true);
+      setLoadingText("Fetching contacts...");
       const response = await axiosPrivate.get(
         process.env.REACT_APP_DEV_SERVER_URL + "/contacts"
       );
       setContacts(response.data.contacts);
+      setIsLoading(false);
+      setLoadingText("");
     };
     fetchContacts();
   }, []);
@@ -52,6 +59,7 @@ const Contacts = ({ chats, dispatch }) => {
           </MenuList>
         </Grid>
       </Grid>
+      {isLoading && <Loading text={loadingText} />}
     </Box>
   );
 };

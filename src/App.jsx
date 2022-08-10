@@ -1,12 +1,12 @@
 import React, { Suspense, useState, lazy, useEffect, useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Box } from "@mui/system";
 import { useAuthContext } from "./contexts/authContext";
 import { useSocket } from "./contexts/socketContext";
 import useAxiosPrivate from "./hooks/useAxiosPrivate";
 import chatReducer from "./reducers/chatReducer";
 import Header from "./components/Header";
+import Loading from "./components/Loading";
 
 const Home = lazy(() => import("./pages/Home"));
 const Contacts = lazy(() => import("./pages/Contacts"));
@@ -22,6 +22,8 @@ const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
   const [currentChatId, setCurrentChatId] = useState();
   const [unopenedChats, setUnopenedChats] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState();
   const { socket } = useSocket();
   const axiosPrivate = useAxiosPrivate();
   const [loggedIn, setLoggedIn] = useState(user !== null);
@@ -59,33 +61,45 @@ const App = () => {
     if (!loggedIn) return;
     const fetchAndSetChats = async () => {
       // fetch chats
-      const response = await axiosPrivate.get(
-        process.env.REACT_APP_DEV_SERVER_URL + "/chats"
-      );
-      const chats = response.data.chats;
-      // fetch contacts
-      const contactResponse = await axiosPrivate.get(
-        process.env.REACT_APP_DEV_SERVER_URL + "/contacts"
-      );
-      const contacts = contactResponse.data.contacts;
-      // map chat to contacts
-      chats.forEach((chat) => {
-        // remove current user from chat users list
-        chat.users = chat.users.find((tuser) => tuser._id !== user.id);
-        // set chat contact
-        const contact =
-          contacts.find(
-            (contact) =>
-              // find chat where user id of contact and chat match
-              chat.users._id === contact.contactId._id
-          ) || null;
-        chat.contact = contact?.name || null;
-      });
-      // console.log(contacts);
-      dispatch({ type: "loaded-messages", payload: chats });
+      try {
+        setIsLoading(true);
+        setLoadingText("fetching your chats...");
+        const response = await axiosPrivate.get(
+          process.env.REACT_APP_DEV_SERVER_URL + "/chats"
+        );
+        const chats = response.data.chats;
+        // fetch contacts
+        setLoadingText("fetching your contacts...");
+        const contactResponse = await axiosPrivate.get(
+          process.env.REACT_APP_DEV_SERVER_URL + "/contacts"
+        );
+        const contacts = contactResponse.data.contacts;
+        // map chat to contacts
+        setLoadingText("matching your chats to contacts...");
+        chats.forEach((chat) => {
+          // remove current user from chat users list
+          chat.users = chat.users.find((tuser) => tuser._id !== user.id);
+          // set chat contact
+          const contact =
+            contacts.find(
+              (contact) =>
+                // find chat where user id of contact and chat match
+                chat.users._id === contact.contactId._id
+            ) || null;
+          chat.contact = contact?.name || null;
+        });
+        // console.log(contacts);
+        setLoadingText("loaded chats");
+        dispatch({ type: "loaded-messages", payload: chats });
+      } catch (err) {
+        let a = 1;
+      } finally {
+        setIsLoading(false);
+        setLoadingText("");
+      }
     };
     fetchAndSetChats();
-  }, [axiosPrivate, loggedIn, user]);
+  }, [axiosPrivate, loggedIn, user?.id]);
 
   // goes through chats and marks messages received when user was offline as delivered
   // counts unopened chats
@@ -209,7 +223,7 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <Suspense fallback={"Loading"}>
+        <Suspense fallback={<Loading />}>
           {loggedIn ? (
             <>
               <Header unopenedChats={unopenedChats} />
@@ -246,6 +260,7 @@ const App = () => {
 
                 <Route path="*" element={<Home />} />
               </Routes>
+              {isLoading && <Loading text={loadingText} />}
             </>
           ) : (
             <Routes>
