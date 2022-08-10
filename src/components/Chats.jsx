@@ -17,60 +17,26 @@ function Chats({ chats }) {
     >
       <Grid container spacing={2}>
         <MenuList style={{ width: "100%", paddingTop: "25px" }}>
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
-          {chats?.map((chat, idx) => (
-            <Link
-              to={`/chats/${chat._id}`}
-              style={{ textDecoration: "none" }}
-              key={idx}
-            >
-              <Chat chat={chat} chats={chats} />
-            </Link>
-          ))}
+          {chats
+            // sort chats by last message
+            ?.sort((a, b) =>
+              a.messages[a.messages.length - 1]?.createdAt <
+              b.messages[b.messages.length - 1]?.createdAt
+                ? 1
+                : b.messages[b.messages.length - 1]?.createdAt <
+                  a.messages[a.messages.length - 1]?.createdAt
+                ? -1
+                : 0
+            )
+            .map((chat, idx) => (
+              <Link
+                to={`/chats/${chat._id}`}
+                style={{ textDecoration: "none" }}
+                key={idx}
+              >
+                <Chat chat={chat} chats={chats} />
+              </Link>
+            ))}
         </MenuList>
       </Grid>
     </Box>
