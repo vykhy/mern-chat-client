@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useAuthContext } from "../contexts/authContext";
 
-function Contact({ contact, chats, dispatch }) {
+function Contact({ contact, chats, dispatch, goTo }) {
   const secondary = true;
   const axiosPrivate = useAxiosPrivate();
   let chatExists;
@@ -38,10 +38,9 @@ function Contact({ contact, chats, dispatch }) {
     dispatch({ type: "new-chat", payload: newChat });
   };
   return (
-    <MenuItem>
-      {/* <Link to={`/chats/${contact.contactId._id}`}> */}
+    <MenuItem sx={{ width: "100%", borderBottom: "1px solid #c0c0c0" }}>
       <Grid container>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <ListItemAvatar>
             <Avatar
               src={contact.contactId.thumbnail || "/images/default-user.png"}
@@ -55,13 +54,23 @@ function Contact({ contact, chats, dispatch }) {
             secondary={secondary ? contact.contactId.email : null}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           {chatExists ? (
-            <Button>
-              <Link to={`/chats/${chatExists._id}`}>Go to chat</Link>{" "}
+            <Button
+              onClick={() => goTo(`/chats/${chatExists._id}`)}
+              variant="outlined"
+              style={{ width: "100%" }}
+            >
+              Go to chat
             </Button>
           ) : (
-            <Button onClick={createChat}>Create chat</Button>
+            <Button
+              variant="contained"
+              style={{ width: "100%" }}
+              onClick={createChat}
+            >
+              Create chat
+            </Button>
           )}
         </Grid>
       </Grid>

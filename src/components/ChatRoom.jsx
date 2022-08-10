@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { format } from "fecha";
 import { Box } from "@mui/system";
 import { useSocket } from "../contexts/socketContext";
 import { useAuthContext } from "../contexts/authContext";
@@ -24,6 +25,7 @@ const style = {
   borderRadius: "5px",
   boxShadow: 24,
   p: 4,
+  fontWeight: "bol",
 };
 
 const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
@@ -164,17 +166,38 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <Typography>{popupMessage.createdAt} </Typography>
+            <Typography variant="body2">
+              {format(
+                new Date(popupMessage.createdAt),
+                "HH:mm, dddd, MMM Do, YYYY "
+              )}{" "}
+            </Typography>
             <br />
-            <Typography>Message:</Typography>
-            <Typography>{popupMessage.message}</Typography>
+            <Typography style={{ color: "#a0a0a0" }} variant="body2">
+              Message:
+            </Typography>
+            <Typography style={{ fontWeight: "bold" }} variant="subtitle1">
+              {popupMessage.message}
+            </Typography>
             <br />
-            <Typography>Read:</Typography>
-            <Typography>{popupMessage.read || "Not read"} </Typography>
+            <Typography style={{ color: "#a0a0a0" }} variant="body2">
+              Read:
+            </Typography>
+            <Typography variant="body2">
+              {format(
+                new Date(popupMessage.read),
+                "HH:mm, dddd, MMMM Do, YYYY "
+              ) || "Not read"}{" "}
+            </Typography>
             <br />
-            <Typography>Delivered:</Typography>
-            <Typography>
-              {popupMessage.delivered || "Not delivered"}{" "}
+            <Typography style={{ color: "#a0a0a0" }} variant="body2">
+              Delivered:
+            </Typography>
+            <Typography variant="body2">
+              {format(
+                new Date(popupMessage.delivered),
+                "HH:mm, dddd, MMMM Do, YYYY "
+              ) || "Not delivered"}{" "}
             </Typography>
           </Box>
         </Modal>
