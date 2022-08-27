@@ -37,7 +37,7 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState();
-  const [message, setMessage] = useState("User created");
+  const [message, setMessage] = useState();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -108,7 +108,7 @@ const Signup = () => {
       setError(err.message);
     } finally {
       setLoadingText("");
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
 

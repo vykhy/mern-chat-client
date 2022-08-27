@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import MenuList from "@mui/material/MenuList";
 import Chat from "./Chat";
+import { Typography } from "@mui/material";
 
 function Chats({ chats }) {
   return (
@@ -17,9 +18,9 @@ function Chats({ chats }) {
     >
       <Grid container spacing={2}>
         <MenuList style={{ width: "100%", paddingTop: "25px" }}>
-          {chats
+          {chats.length > 0 ?
             // sort chats by last message
-            ?.sort((a, b) =>
+            chats.sort((a, b) =>
               a.messages[a.messages.length - 1]?.createdAt <
               b.messages[b.messages.length - 1]?.createdAt
                 ? 1
@@ -36,7 +37,9 @@ function Chats({ chats }) {
               >
                 <Chat chat={chat} chats={chats} />
               </Link>
-            ))}
+            )):
+            <Typography variant={'h5'} style={{ marginLeft: '10px'}}>You have no chats yet</Typography>
+            }
         </MenuList>
       </Grid>
     </Box>

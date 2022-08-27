@@ -37,7 +37,7 @@ const Contacts = ({ chats, dispatch }) => {
       <Grid container spacing={2} style={{ marginTop: "1px" }}>
         <Grid item xs={0} md={3}></Grid>
         <Grid item xs={12} md={5}>
-          <Typography variant={"h6"} gutterBottom>
+          <Typography variant={"h5"} gutterBottom>
             Your Contacts
           </Typography>
           <MenuList
@@ -45,7 +45,8 @@ const Contacts = ({ chats, dispatch }) => {
               paddingBottom: 0,
             }}
           >
-            {contacts
+            {contacts && contacts.length > 0 ?
+            contacts
               ?.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
               .map((contact, idx) => (
                 <Contact
@@ -55,7 +56,10 @@ const Contacts = ({ chats, dispatch }) => {
                   dispatch={dispatch}
                   goTo={goTo}
                 />
-              ))}
+              ))
+          : <Typography style={{ marginLeft: '10px'}} variant='h6'>You have no contacts yet. Add one now!</Typography>
+          }
+            
           </MenuList>
         </Grid>
       </Grid>

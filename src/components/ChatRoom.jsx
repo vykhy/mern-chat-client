@@ -135,7 +135,7 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
           }}
           style={{ scrollBehaviour: "smooth" }}
         >
-          {chat?.messages.slice(-50).map((message, index) => (
+          {chat?.messages.map((message, index) => (
             <Message
               key={index}
               className="message"
@@ -184,20 +184,24 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
               Read:
             </Typography>
             <Typography variant="body2">
-              {format(
-                new Date(popupMessage.read),
-                "HH:mm, dddd, MMMM Do, YYYY "
-              ) || "Not read"}{" "}
+              {popupMessage.read
+                ? format(
+                    new Date(popupMessage.read),
+                    "HH:mm, dddd, MMMM Do, YYYY "
+                  )
+                : "Not read"}
             </Typography>
             <br />
             <Typography style={{ color: "#a0a0a0" }} variant="body2">
               Delivered:
             </Typography>
             <Typography variant="body2">
-              {format(
-                new Date(popupMessage.delivered),
-                "HH:mm, dddd, MMMM Do, YYYY "
-              ) || "Not delivered"}{" "}
+              {popupMessage.delivered
+                ? format(
+                    new Date(popupMessage.delivered),
+                    "HH:mm, dddd, MMMM Do, YYYY "
+                  )
+                : "Not delivered"}
             </Typography>
           </Box>
         </Modal>

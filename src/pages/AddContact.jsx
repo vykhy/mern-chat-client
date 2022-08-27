@@ -79,7 +79,7 @@ const AddContact = () => {
     try {
       setIsLoading(true);
       setLoadingText("Adding Contact...");
-      const result = await axiosPrivate.post("/contacts/add", {
+      const result = await axiosPrivate.post(process.env.REACT_APP_DEV_SERVER_URL + "/contacts/add", {
         name,
         email,
       });

@@ -23,12 +23,12 @@ function Contact({ contact, chats, dispatch, goTo }) {
     chats.find((chat) => chat.users._id === contact.contactId._id);
 
   const createChat = async () => {
-    const response = await axiosPrivate.post("/chats/create", {
+    const response = await axiosPrivate.post(`${process.env.REACT_APP_DEV_SERVER_URL}/chats/create`, {
       userId1: contact.contactId._id,
       userId2: id,
     });
     const contactResponse = await axiosPrivate.get(
-      `/contacts/${contact.contactId._id}`
+      `${process.env.REACT_APP_DEV_SERVER_URL}/contacts/${contact.contactId._id}`
     );
     const chatContact = contactResponse.data;
     let newChat = response.data;

@@ -42,8 +42,8 @@ function Profile({ chats }) {
     } else {
       // get details of whoever that user is
       const chatOfUser = chats?.find((chat) => chat.users._id === id);
-      setChatId(chatOfUser._id); // set the chat id
-      setContactName(chatOfUser.contact); //set contact name
+      setChatId(chatOfUser?._id); // set the chat id
+      setContactName(chatOfUser?.contact); //set contact name
       fetchUser(id);
     }
   }, [id, user.id]);

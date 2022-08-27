@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { useAuthContext } from "./contexts/authContext";
 import { useSocket } from "./contexts/socketContext";
+import initFirebase from "./services/initfirebase";
 import useAxiosPrivate from "./hooks/useAxiosPrivate";
 import chatReducer from "./reducers/chatReducer";
 import Header from "./components/Header";
@@ -17,6 +18,8 @@ const ChatsContainer = lazy(() => import("./pages/ChatsContainer"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfileImage = lazy(() => import("./pages/EditProfileImage"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
+
+initFirebase();
 
 const App = () => {
   const { user, accessToken, removeUser, removeToken } = useAuthContext();
@@ -157,18 +160,19 @@ const App = () => {
   const scrollToBottom = () => {
     const element = document.getElementById("messageContainer");
     if (element) {
+      // console.log('scroll run')
       element.scrollTop = element.scrollHeight;
     }
   };
   const handleNewChat = async (data) => {
     const chat = data.chat;
-    console.log("new-chat");
+    // console.log("new-chat");
     const message = data.message;
     if (chats.find((chat) => chat._id === data.chat._id)) {
       addMessage(message);
       return;
     } else {
-      const contact = await axiosPrivate.get(`/contacts/${message.authorId}`);
+      const contact = await axiosPrivate.get(`${process.env.REACT_APP_DEV_SERVER_URL}/contacts/${message.authorId}`);
       chat.contact = contact.data.name;
       message.delivered = new Date(Date.now());
       chat.messages = [message];
@@ -182,17 +186,19 @@ const App = () => {
     }
   };
   const handleScroll = (data) => {
+    // console.log('initiating scroll')
     const element = document.getElementById("messageContainer");
     if (element && element.scrollHeight - element.scrollTop < 1500) {
       if (currentChatId === data.chatId) {
+        // console.log('chat id check passed')
         setTimeout(() => {
           scrollToBottom();
-        }, 200);
+        }, 400);
       }
     }
   };
   const handleNewMessage = (data) => {
-    console.log("new-message");
+    // console.log("new-message");
     data.delivered = new Date(Date.now());
     addMessage(data);
     handleScroll(data);
@@ -202,16 +208,16 @@ const App = () => {
     socket?.emit("message-delivered", data);
   };
   const handleMessageSent = (data) => {
-    console.log("message-sent");
+    //console.log("message-sent");
     addMessage(data);
     handleScroll(data);
   };
   const handleMarkedAsRead = (data) => {
-    console.log("mark as read");
+    // console.log("mark as read");
     dispatch({ type: "mark-as-read", payload: data });
   };
   const handleMarkedAsDelivered = (data) => {
-    console.log("mark as delivered");
+    // console.log("mark as delivered");
     dispatch({ type: "mark-as-delivered", payload: data });
   };
   const addNewChat = (data) => {
@@ -258,7 +264,7 @@ const App = () => {
                   element={<Profile chats={chats} />}
                 ></Route>
 
-                <Route path="*" element={<Home />} />
+                <Route path="*" element={<Home chats={chats}/>} />
               </Routes>
               {isLoading && <Loading text={loadingText} />}
             </>
