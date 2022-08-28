@@ -135,7 +135,7 @@ const ChatRoom = ({ chats, scrollToBottom, setCurrentChatId }) => {
           }}
           style={{ scrollBehaviour: "smooth" }}
         >
-          {chat?.messages.map((message, index) => (
+          {chat?.messages.slice(-30).map((message, index) => (
             <Message
               key={index}
               className="message"

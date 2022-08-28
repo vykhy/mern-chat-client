@@ -80,7 +80,7 @@ const Login = () => {
     if (ruleBroken) return;
 
     // post to server
-    setLoadingText("Loggin in...");
+    setLoadingText("Logging in...");
     setIsLoading(true);
     try {
       const url = process.env.REACT_APP_DEV_SERVER_URL + "/auth/login";
