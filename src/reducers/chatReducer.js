@@ -1,5 +1,3 @@
-import Chats from "../components/Chats";
-
 const chatReducer = (state, action) => {
   switch (action.type) {
     case "loaded-messages": {
